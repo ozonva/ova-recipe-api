@@ -26,13 +26,13 @@ func TestSplitIntSlice(t *testing.T) {
 	for _, param := range params {
 		result := SplitIntSlice(param.inSlice, param.batchSize)
 		if len(result) != len(param.outSlice) {
-			t.Errorf("%s: invalid len, src slice %v, expected slice %v", param.description, param.inSlice, param.outSlice)
+			t.Errorf("%s: invalid len, src slice %v, expected slice %v", param.description, result, param.outSlice)
 		}
 		if cap(result) != cap(param.outSlice) {
-			t.Errorf("%s: invalid cap, src slice %v, expected slice %v", param.description, param.inSlice, param.outSlice)
+			t.Errorf("%s: invalid cap, src slice %v, expected slice %v", param.description, result, param.outSlice)
 		}
 		if !reflect.DeepEqual(result, param.outSlice) {
-			t.Errorf("%s: resulting slice %v is not equal to expected %v", param.description, param.inSlice, param.outSlice)
+			t.Errorf("%s: resulting slice %v is not equal to expected %v", param.description, result, param.outSlice)
 		}
 	}
 }
