@@ -8,9 +8,9 @@ import (
 func TestSplitIntSlice(t *testing.T) {
 	var params = []struct {
 		description string
-		inSlice   []int
-		batchSize int
-		outSlice  [][]int
+		inSlice     []int
+		batchSize   int
+		outSlice    [][]int
 	}{
 		{"nil slice", nil, 0, [][]int{}},
 		{"empty slice, batchSize = 0", []int{}, 0, [][]int{}},

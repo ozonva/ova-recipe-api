@@ -9,9 +9,9 @@ import (
 func TestInvertMap(t *testing.T) {
 	var params = []struct {
 		description string
-		inMap map[string]string
-		err error
-		outMap map[string]string
+		inMap       map[string]string
+		err         error
+		outMap      map[string]string
 	}{
 		{"nil map", nil, nil, map[string]string{}},
 		{"empty map", map[string]string{}, nil, map[string]string{}},
@@ -21,10 +21,10 @@ func TestInvertMap(t *testing.T) {
 	for _, param := range params {
 		result, err := InvertMap(param.inMap)
 		if param.err != nil && param.err.Error() != err.Error() {
-			t.Errorf("Invalid error")
+			t.Errorf("%s: expected error '%v' not equal result error '%v'", param.description, err, param.err)
 		}
 		if !reflect.DeepEqual(result, param.outMap) {
-			t.Errorf("Invalid map")
+			t.Errorf("%s: expected map '%v' not equal result map '%v'", param.description, param.outMap, result)
 		}
 	}
 }
