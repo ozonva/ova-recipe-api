@@ -10,7 +10,7 @@ func makeSetExcludeElements(s []int) map[int]bool {
 	return result
 }
 
-func iterateOverIncludeSliceElements (s []int, f func(elem int))  {
+func iterateOverIncludeSliceElements(s []int, f func(elem int)) {
 	for _, elem := range s {
 		if _, ok := excludeElements[elem]; !ok {
 			f(elem)
