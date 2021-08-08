@@ -2,7 +2,7 @@ package utils
 
 import "fmt"
 
-func InvertMap(m map[string]string) (map[string]string, error) {
+func InvertStrStrMap(m map[string]string) (map[string]string, error) {
 	result := make(map[string]string, len(m))
 	for k, v := range m {
 		if _, ok := result[v]; ok {

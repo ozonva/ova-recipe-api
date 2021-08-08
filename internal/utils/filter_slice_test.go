@@ -17,7 +17,7 @@ func TestFilterSlice(t *testing.T) {
 		{"slice without exclude elements", []int{-1, 3, 5, 17}, []int{-1, 3, 5, 17}},
 	}
 	for _, param := range params {
-		result := FilterSlice(param.inSlice)
+		result := FilterIntSlice(param.inSlice)
 		if len(result) != len(param.outSlice) {
 			t.Errorf("%s: invalid len, src slice %v, expected slice %v", param.description, result, param.outSlice)
 		}

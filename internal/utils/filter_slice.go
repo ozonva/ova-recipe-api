@@ -18,7 +18,7 @@ func iterateOverIncludeSliceElements(s []int, f func(elem int)) {
 	}
 }
 
-func FilterSlice(s []int) []int {
+func FilterIntSlice(s []int) []int {
 	elemsCount := 0
 	// Trying to avoid unnecessary memory allocations
 	iterateOverIncludeSliceElements(s, func(elem int) { elemsCount += 1 })

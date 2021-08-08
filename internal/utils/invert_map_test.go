@@ -19,7 +19,7 @@ func TestInvertMap(t *testing.T) {
 		{"map with dup value", map[string]string{"a": "1", "b": "2", "c": "2"}, fmt.Errorf("key '2' already exists"), nil},
 	}
 	for _, param := range params {
-		result, err := InvertMap(param.inMap)
+		result, err := InvertStrStrMap(param.inMap)
 		if param.err != nil && param.err.Error() != err.Error() {
 			t.Errorf("%s: expected error '%v' not equal result error '%v'", param.description, err, param.err)
 		}
