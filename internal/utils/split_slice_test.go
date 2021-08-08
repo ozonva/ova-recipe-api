@@ -9,12 +9,11 @@ func TestSplitIntSlice(t *testing.T) {
 	var params = []struct {
 		description string
 		inSlice     []int
-		batchSize   int
+		batchSize   uint
 		outSlice    [][]int
 	}{
 		{"nil slice", nil, 0, [][]int{}},
 		{"empty slice, batchSize = 0", []int{}, 0, [][]int{}},
-		{"empty slice, batchSize < 0", []int{}, -1, [][]int{}},
 		{"empty slice, batchSize > 0", []int{}, 1, [][]int{}},
 		{"not empty slice, batchSize == 0", []int{1}, 0, [][]int{}},
 		{"not empty slice, batchSize == len(slice)", []int{1}, 1, [][]int{{1}}},
