@@ -1,21 +1,22 @@
 package utils
 
+func min(lhs, rhs uint) uint {
+	if lhs < rhs {
+		return lhs
+	}
+	return rhs
+}
+
 func SplitIntSlice(srcSlice []int, batchSize uint) [][]int {
-	srcSliceLen := uint(len(srcSlice))
-	if 0 == srcSliceLen || 0 == batchSize {
+	if 0 == batchSize {
 		return make([][]int, 0, 0)
 	}
-	subSlicesCount := srcSliceLen / batchSize
-	if 0 != srcSliceLen%batchSize {
-		subSlicesCount += 1
+	srcSliceLen := uint(len(srcSlice))
+	var result = make([][]int, 0, (srcSliceLen+batchSize-1)/batchSize)
+	for startIdx := uint(0); startIdx < srcSliceLen; startIdx += batchSize {
+		endIdx := min(startIdx+batchSize, srcSliceLen)
+		subSlice := append(make([]int, 0, endIdx-startIdx), srcSlice[startIdx:endIdx]...)
+		result = append(result, subSlice)
 	}
-	var result = make([][]int, 0, subSlicesCount)
-	startIdx := uint(0)
-	for subSlicesCount > 1 {
-		result = append(result, append(make([]int, 0, batchSize), srcSlice[startIdx:startIdx+batchSize]...))
-		startIdx += batchSize
-		subSlicesCount -= 1
-	}
-	result = append(result, append(make([]int, 0, srcSliceLen-startIdx), srcSlice[startIdx:]...))
 	return result
 }
