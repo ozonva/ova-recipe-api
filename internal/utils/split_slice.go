@@ -1,6 +1,8 @@
 package utils
 
-import "ova-recipe-api/internal/recipe"
+import (
+	"ova-recipe-api/internal/recipe"
+)
 
 func min(lhs, rhs uint) uint {
 	if lhs < rhs {
