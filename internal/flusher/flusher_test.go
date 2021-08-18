@@ -31,41 +31,55 @@ var _ = Describe("Flusher", func() {
 	})
 	Describe("Writing data to DB", func() {
 		When("can write all data", func() {
+			AssertFlushReturnNil := func(inRecipes []recipe.Recipe) {
+				Expect(testFlusher.Flush(inRecipes)).To(BeNil())
+			}
 			Context("recipes count less than chunkSize", func() {
-				It("Flush should return nil", func() {
-					oneRecipe := recipes[:1]
+				oneRecipe := recipes[:1]
+				BeforeEach(func() {
 					mockRepo.EXPECT().AddRecipes(oneRecipe).Return(nil).Times(1)
-					Expect(testFlusher.Flush(oneRecipe)).To(BeNil())
+				})
+				It("Flush should return nil", func() {
+					AssertFlushReturnNil(oneRecipe)
 				})
 			})
 			Context("recipes count more than chunkSize", func() {
-				It("Flush should return nil", func() {
+				BeforeEach(func() {
 					gomock.InOrder(
 						mockRepo.EXPECT().AddRecipes(recipes[:2]).Return(nil).Times(1),
 						mockRepo.EXPECT().AddRecipes(recipes[2:]).Return(nil).Times(1),
 					)
-					Expect(testFlusher.Flush(recipes)).To(BeNil())
+				})
+				It("Flush should return nil", func() {
+					AssertFlushReturnNil(recipes)
 				})
 			})
 		})
 		When("can not write", func() {
 			err := fmt.Errorf("can not wrire data")
+			AssertFlushReturnSomeRecipes := func(outRecipes []recipe.Recipe) {
+				Expect(testFlusher.Flush(recipes)).To(Equal(outRecipes))
+			}
 			Context("all data", func() {
-				It("Flush should return all data", func() {
+				BeforeEach(func() {
 					gomock.InOrder(
 						mockRepo.EXPECT().AddRecipes(recipes[:2]).Return(err).Times(1),
 						mockRepo.EXPECT().AddRecipes(recipes[2:]).Return(err).Times(1),
 					)
-					Expect(testFlusher.Flush(recipes)).To(Equal(recipes))
+				})
+				It("Flush should return all data", func() {
+					AssertFlushReturnSomeRecipes(recipes)
 				})
 			})
 			Context("some data", func() {
-				It("Flush should return only rejected data", func() {
+				BeforeEach(func() {
 					gomock.InOrder(
 						mockRepo.EXPECT().AddRecipes(recipes[:2]).Return(err).Times(1),
 						mockRepo.EXPECT().AddRecipes(recipes[2:]).Return(nil).Times(1),
 					)
-					Expect(testFlusher.Flush(recipes)).To(Equal(recipes[:2]))
+				})
+				It("Flush should return only rejected data", func() {
+					AssertFlushReturnSomeRecipes(recipes[:2])
 				})
 			})
 		})
