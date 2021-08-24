@@ -4,45 +4,53 @@ import (
 	"context"
 	"ova-recipe-api/internal/flusher"
 	"ova-recipe-api/internal/recipe"
+	"ova-recipe-api/internal/ticker"
 	"sync"
-	"time"
 )
 
 type Error string
 
 func (e Error) Error() string { return string(e) }
 
-const NotEnoughCapacityError = Error("Cannot save new recipe, not enough capacity. ")
+const NotEnoughCapacityError = Error("Cannot save recipe, not enough capacity. ")
 
 type Saver interface {
-	Run(saveInterval time.Duration)
+	Run(ticker ticker.Ticker)
 	Save(recipe recipe.Recipe) error
 	Close()
 }
 
 func New(flusher flusher.Flusher, capacity uint) Saver {
-	return &saver{flusher: flusher, recipes: make([]recipe.Recipe, 0, capacity)}
+	return &saver{
+		flusher:  flusher,
+		recipes:  make([]recipe.Recipe, 0, capacity),
+		cancelFn: func() {},
+	}
 }
 
 type saver struct {
 	flusher      flusher.Flusher
 	recipesGuard sync.Mutex
 	recipes      []recipe.Recipe
+	cancelCtx    context.Context
 	cancelFn     context.CancelFunc
 }
 
-func (s *saver) Run(saveInterval time.Duration) {
-	ctx, cancel := context.WithCancel(context.Background())
-	s.cancelFn = cancel
+func (s *saver) Run(ticker ticker.Ticker) {
+	goroutineCtx, goroutineCancel := context.WithCancel(context.Background())
+	saverCtx, saverCancel := context.WithCancel(context.Background())
+	s.cancelCtx = saverCtx
+	s.cancelFn = goroutineCancel
 	go func() {
-		ticker := time.NewTicker(saveInterval)
+		tickerCh := ticker.Chanel()
 		defer ticker.Stop()
 		for {
 			select {
-			case <-ctx.Done():
+			case <-goroutineCtx.Done():
 				s.flush()
+				saverCancel()
 				return
-			case <-ticker.C:
+			case <-tickerCh:
 				s.flush()
 			}
 		}
@@ -76,4 +84,5 @@ func (s *saver) Save(recipe recipe.Recipe) error {
 
 func (s *saver) Close() {
 	s.cancelFn()
+	<-s.cancelCtx.Done()
 }
