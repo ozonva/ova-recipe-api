@@ -53,13 +53,12 @@ var _ = Describe("Saver", func() {
 			})
 		})
 		Describe("Save function", func() {
-			var tickerCh chan time.Time
-			BeforeEach(func() {
-				tickerCh = make(chan time.Time)
-				mockTicker.EXPECT().Chanel().Return(tickerCh).Times(1)
-				mockTicker.EXPECT().Stop().Do(func() { close(tickerCh) }).Return().Times(1)
-			})
 			When("call Save after Close", func() {
+				BeforeEach(func() {
+					tickerCh := make(chan time.Time)
+					mockTicker.EXPECT().Chanel().Return(tickerCh).Times(1)
+					mockTicker.EXPECT().Stop().Do(func() { close(tickerCh) }).Return().Times(1)
+				})
 				It("returns error", func() {
 					mockFlusher.EXPECT().Flush(nil).Return(nil).Times(0)
 					s, _ := New(mockFlusher, 1, mockTicker)
@@ -68,6 +67,11 @@ var _ = Describe("Saver", func() {
 				})
 			})
 			When("call Save more than capacity times", func() {
+				BeforeEach(func() {
+					tickerCh := make(chan time.Time)
+					mockTicker.EXPECT().Chanel().Return(tickerCh).Times(1)
+					mockTicker.EXPECT().Stop().Do(func() { close(tickerCh) }).Return().Times(1)
+				})
 				It("returns error", func() {
 					mockFlusher.EXPECT().Flush([]recipe.Recipe{{}}).Return(nil).Times(1)
 					s, _ := New(mockFlusher, 1, mockTicker)
@@ -77,6 +81,12 @@ var _ = Describe("Saver", func() {
 				})
 			})
 			When("call Save more than capacity times with tick between", func() {
+				var tickerCh chan time.Time
+				BeforeEach(func() {
+					tickerCh = make(chan time.Time)
+					mockTicker.EXPECT().Chanel().Return(tickerCh).Times(1)
+					mockTicker.EXPECT().Stop().Do(func() { close(tickerCh) }).Return().Times(1)
+				})
 				It("returns error", func() {
 					mockFlusher.EXPECT().Flush([]recipe.Recipe{{}}).Return(nil).Times(2)
 					s, _ := New(mockFlusher, 1, mockTicker)
@@ -87,6 +97,11 @@ var _ = Describe("Saver", func() {
 				})
 			})
 			When("Save calls from a lot of coroutines", func() {
+				BeforeEach(func() {
+					tickerCh := make(chan time.Time)
+					mockTicker.EXPECT().Chanel().Return(tickerCh).Times(1)
+					mockTicker.EXPECT().Stop().Do(func() { close(tickerCh) }).Return().Times(1)
+				})
 				It("should be ok", func() {
 					capacity := 1000
 					mockFlusher.EXPECT().Flush(gomock.Any()).DoAndReturn(func(r []recipe.Recipe) {
@@ -118,6 +133,12 @@ var _ = Describe("Saver", func() {
 				})
 			})
 			When("Save calls from a lot of coroutines with ticks", func() {
+				var tickerCh chan time.Time
+				BeforeEach(func() {
+					tickerCh = make(chan time.Time)
+					mockTicker.EXPECT().Chanel().Return(tickerCh).Times(1)
+					mockTicker.EXPECT().Stop().Do(func() { close(tickerCh) }).Return().Times(1)
+				})
 				It("should be ok", func() {
 					totalFlushedRecipes := uint64(0)
 					mockFlusher.EXPECT().Flush(gomock.Any()).DoAndReturn(func(r []recipe.Recipe) {
@@ -163,6 +184,12 @@ var _ = Describe("Saver", func() {
 				})
 			})
 			When("Save calls from a lot of coroutines with ticks and small capacity", func() {
+				var tickerCh chan time.Time
+				BeforeEach(func() {
+					tickerCh = make(chan time.Time)
+					mockTicker.EXPECT().Chanel().Return(tickerCh).Times(1)
+					mockTicker.EXPECT().Stop().Do(func() { close(tickerCh) }).Return().Times(1)
+				})
 				It("should be ok", func() {
 					totalFlushedRecipes := uint64(0)
 					mockFlusher.EXPECT().Flush(gomock.Any()).DoAndReturn(func(r []recipe.Recipe) {
