@@ -77,12 +77,12 @@ func (s *saver) cloneRecipes() []recipe.Recipe {
 }
 
 func (s *saver) flush(recipes []recipe.Recipe) {
-	if recipes != nil && len(recipes) > 0{
+	if recipes != nil && len(recipes) > 0 {
 		s.flusher.Flush(recipes)
 	}
 }
 
-func (s *saver) flushWithClose()  {
+func (s *saver) flushWithClose() {
 	s.recipesGuard.Lock()
 	defer s.recipesGuard.Unlock()
 	s.flush(s.recipesBuf)

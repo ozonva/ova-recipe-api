@@ -145,7 +145,6 @@ var _ = Describe("Saver", func() {
 						totalFlushedRecipes += uint64(len(r))
 					}).Return(nil).AnyTimes()
 
-
 					coroutinesCount := 11
 					var startWG sync.WaitGroup
 					startWG.Add(coroutinesCount)
@@ -164,7 +163,7 @@ var _ = Describe("Saver", func() {
 						}
 					}
 
-					for idx := 0; idx < coroutinesCount - 1; idx += 1 {
+					for idx := 0; idx < coroutinesCount-1; idx += 1 {
 						go goroSaveFunc(uint64(idx*100), 100)
 					}
 
@@ -196,7 +195,6 @@ var _ = Describe("Saver", func() {
 						totalFlushedRecipes += uint64(len(r))
 					}).Return(nil).AnyTimes()
 
-
 					coroutinesCount := 11
 					var startWG sync.WaitGroup
 					startWG.Add(coroutinesCount)
@@ -219,7 +217,7 @@ var _ = Describe("Saver", func() {
 						}
 					}
 
-					for idx := 0; idx < coroutinesCount - 1; idx += 1 {
+					for idx := 0; idx < coroutinesCount-1; idx += 1 {
 						go goroSaveFunc(uint64(idx*100), 100)
 					}
 
