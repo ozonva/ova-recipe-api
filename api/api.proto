@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package ova.recipe.api;
+
+option go_package = "github.com/ozonva/ova-recipe-api/pkg/api";
+
+service OvaRecipeApi {
+  rpc CreateRecipeV1(CreateRecipeRequestV1) returns (CreateRecipeResponseV1) {}
+  rpc DescribeRecipeV1(DescribeRecipeRequestV1) returns (DescribeRecipeResponseV1) {}
+  rpc ListRecipesV1(ListRecipesRequestV1) returns (ListRecipesResponseV1) {}
+  rpc RemoveRecipeV1(RemoveRecipeRequestV1) returns (RemoveRecipesResponseV1) {}
+}
+
+message CreateRecipeRequestV1 {
+  uint64 user_id          = 1;
+  string name             = 2;
+  string description      = 3;
+  repeated string actions = 4;
+}
+
+message CreateRecipeResponseV1 {
+  uint64 recipe_id = 1;
+}
+
+message DescribeRecipeRequestV1 {
+  uint64 recipe_id = 1;
+}
+
+message RecipeV1 {
+  uint64 recipe_id        = 1;
+  uint64 user_id          = 2;
+  string name             = 3;
+  string description      = 4;
+  repeated string actions = 5;
+}
+
+message DescribeRecipeResponseV1 {
+  RecipeV1 recipe = 1;
+}
+
+message ListRecipesRequestV1 {
+// some filters here
+}
+
+message ListRecipesResponseV1 {
+  repeated RecipeV1 recipes = 1;
+}
+
+message RemoveRecipeRequestV1 {
+  uint64 recipe_id = 1;
+}
+
+message RemoveRecipesResponseV1 {
+  RecipeV1 recipe = 1;
+}
