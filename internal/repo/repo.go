@@ -60,7 +60,7 @@ func (r *repo) AddRecipes(_ []recipe.Recipe) error {
 func (r *repo) ListRecipes(ctx context.Context, limit, offset uint64) ([]recipe.Recipe, error) {
 	result := make([]recipe.Recipe, 0, limit)
 	rows, err := r.db.QueryxContext(
-		ctx, "SELECT * FROM recipe ORDER BY id LIMIT $1 OFFSET $2", limit, offset,
+		ctx, "SELECT id, user_id, name, description, actions FROM recipe ORDER BY id LIMIT $1 OFFSET $2", limit, offset,
 	)
 	if err != nil {
 		return result, err
@@ -99,12 +99,12 @@ func (r *repo) DescribeRecipe(ctx context.Context, recipeId uint64) (*recipe.Rec
 }
 
 func (r *repo) RemoveRecipe(ctx context.Context, recipeId uint64) error {
-	result, err := r.db.ExecContext(ctx, "DELETE FROM recipe WHERE id = ?", recipeId)
+	result, err := r.db.ExecContext(ctx, "DELETE FROM recipe WHERE id = $1", recipeId)
 	if err != nil {
 		return err
 	}
-	rowsAffected, err := result.RowsAffected()
-	if err != nil {
+	rowsAffected, rowsAffectedErr := result.RowsAffected()
+	if rowsAffectedErr != nil {
 		return err
 	}
 	if rowsAffected == 0 {
