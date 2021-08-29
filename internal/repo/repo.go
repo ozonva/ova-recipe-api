@@ -83,7 +83,7 @@ func (r *repo) ListRecipes(ctx context.Context, limit, offset uint64) ([]recipe.
 
 func (r *repo) DescribeRecipe(ctx context.Context, recipeId uint64) (*recipe.Recipe, error) {
 	row := r.db.QueryRowxContext(
-		ctx, "SELECT user_id, name, description, actions FROM recipe WHERE id = ?", recipeId,
+		ctx, "SELECT user_id, name, description, actions FROM recipe WHERE id = $1", recipeId,
 	)
 	var userId uint64
 	var name, description string
