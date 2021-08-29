@@ -7,10 +7,10 @@ type Recipe struct {
 	userId      uint64
 	name        string
 	description string
-	actions     []Action
+	actions     []string
 }
 
-func New(id uint64, userId uint64, name string, description string, actions []Action) Recipe {
+func New(id uint64, userId uint64, name string, description string, actions []string) Recipe {
 	return Recipe{id: id, userId: userId, name: name, description: description, actions: actions}
 }
 
@@ -30,13 +30,8 @@ func (r *Recipe) Description() string {
 	return r.description
 }
 
-func (r *Recipe) Cook() error {
-	for idx, _ := range r.actions {
-		if err := r.actions[idx].DoAction(); err != nil {
-			return err
-		}
-	}
-	return nil
+func (r *Recipe) Actions() []string {
+	return r.actions
 }
 
 func (r *Recipe) String() string {

@@ -39,7 +39,8 @@ message DescribeRecipeResponseV1 {
 }
 
 message ListRecipesRequestV1 {
-// some filters here
+  uint64 limit  = 1;
+  uint64 offset = 2;
 }
 
 message ListRecipesResponseV1 {
@@ -51,5 +52,5 @@ message RemoveRecipeRequestV1 {
 }
 
 message RemoveRecipesResponseV1 {
-  RecipeV1 recipe = 1;
+  uint64 recipe_id = 1;
 }

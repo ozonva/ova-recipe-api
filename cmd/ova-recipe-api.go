@@ -6,17 +6,24 @@ import (
 	"google.golang.org/grpc"
 	"net"
 	"ova-recipe-api/internal/api"
+	"ova-recipe-api/internal/repo"
 	recipeApi "ova-recipe-api/pkg/api/github.com/ozonva/ova-recipe-api/pkg/api"
 )
 
 func main() {
 	fmt.Println("Hi, i am ova-recipe-api!")
+
+	recipeRepo, err := repo.New("postgres://admin:12345678@localhost:5432/recipe_api?sslmode=disable")
+	if err != nil {
+		log.Fatal().Msgf("Can not create recipeRepo, %s", err)
+	}
+
 	listen, err := net.Listen("tcp", ":8080")
 	if err != nil {
 		log.Fatal().Msgf("Failed to listen server %s", err)
 	}
 	service := grpc.NewServer()
-	recipeApi.RegisterOvaRecipeApiServer(service, api.NewOvaRecipeApiServer())
+	recipeApi.RegisterOvaRecipeApiServer(service, api.NewOvaRecipeApiServer(recipeRepo))
 	if err = service.Serve(listen); err != nil {
 		log.Fatal().Msgf("failed to serve: %s", err)
 	}

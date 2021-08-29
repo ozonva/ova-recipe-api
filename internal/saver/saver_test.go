@@ -120,7 +120,7 @@ var _ = Describe("Saver", func() {
 						startWG.Done()
 						startWG.Wait()
 						for idx := startIdx; idx < startIdx+count; idx++ {
-							Expect(s.Save(recipe.New(idx, idx, "", "", []recipe.Action{}))).To(BeNil())
+							Expect(s.Save(recipe.New(idx, idx, "", "", []string{}))).To(BeNil())
 						}
 					}
 					for idx := 0; idx < coroutinesCount; idx += 1 {
@@ -159,7 +159,7 @@ var _ = Describe("Saver", func() {
 						startWG.Done()
 						startWG.Wait()
 						for idx := startIdx; idx < startIdx+count; idx++ {
-							Expect(s.Save(recipe.New(idx, idx, "", "", []recipe.Action{}))).To(BeNil())
+							Expect(s.Save(recipe.New(idx, idx, "", "", []string{}))).To(BeNil())
 						}
 					}
 
@@ -211,7 +211,7 @@ var _ = Describe("Saver", func() {
 						startWG.Wait()
 						for idx := startIdx; idx < startIdx+count; idx++ {
 							atomic.AddUint64(&totalAttempts, 1)
-							if err := s.Save(recipe.New(idx, idx, "", "", []recipe.Action{})); err != nil {
+							if err := s.Save(recipe.New(idx, idx, "", "", []string{})); err != nil {
 								atomic.AddUint64(&totalRejectedRecipes, 1)
 							}
 						}

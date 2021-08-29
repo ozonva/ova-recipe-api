@@ -8,5 +8,9 @@ import (
 
 func (s *GRPCServer) RemoveRecipeV1(ctx context.Context, req *recipeApi.RemoveRecipeRequestV1) (*recipeApi.RemoveRecipesResponseV1, error) {
 	log.Info().Msgf("Receive new remove request: %s", req.String())
-	return &recipeApi.RemoveRecipesResponseV1{}, nil
+	if err := s.recipeRepo.RemoveRecipe(ctx, req.RecipeId); err != nil {
+		log.Error().Msgf("Can not remove recipe, error: %s", err)
+		return nil, err
+	}
+	return &recipeApi.RemoveRecipesResponseV1{RecipeId: req.RecipeId}, nil
 }

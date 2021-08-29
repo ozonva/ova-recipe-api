@@ -1,11 +1,15 @@
 package api
 
-import recipeApi "ova-recipe-api/pkg/api/github.com/ozonva/ova-recipe-api/pkg/api"
+import (
+	"ova-recipe-api/internal/repo"
+	recipeApi "ova-recipe-api/pkg/api/github.com/ozonva/ova-recipe-api/pkg/api"
+)
 
 type GRPCServer struct {
 	recipeApi.OvaRecipeApiServer
+	recipeRepo repo.RecipeRepo
 }
 
-func NewOvaRecipeApiServer() recipeApi.OvaRecipeApiServer {
-	return &GRPCServer{}
+func NewOvaRecipeApiServer(recipeRepo repo.RecipeRepo) recipeApi.OvaRecipeApiServer {
+	return &GRPCServer{recipeRepo: recipeRepo}
 }
