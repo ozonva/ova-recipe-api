@@ -31,7 +31,7 @@ var _ = Describe("Repo", func() {
 	AfterEach(func() {
 		defer dbMock.Close()
 	})
-	Describe("AddRecipe tests", func() {
+	Describe("AddRecipe test", func() {
 		It("returns new id", func() {
 			expectedR := recipe.New(1, 1, "test", "test", []string{"test"})
 			queryMock.ExpectQuery("INSERT INTO recipe").
@@ -40,6 +40,18 @@ var _ = Describe("Repo", func() {
 			newId, err := repoTest.AddRecipe(ctx, expectedR)
 			Expect(err).To(BeNil())
 			Expect(newId).To(Equal(expectedR.Id()))
+		})
+	})
+	Describe("DescribeRecipe tests", func() {
+		It("returns recipe", func() {
+			expectedR := recipe.New(1, 1, "test", "test", []string{"test"})
+			queryMock.ExpectQuery("SELECT user_id, name, description, actions").
+				WithArgs(uint64(1)).
+				WillReturnRows(sqlmock.NewRows([]string{"user_id", "name", "description", "actions"}).
+					AddRow(expectedR.UserId(), expectedR.Name(), expectedR.Description(), pq.Array(expectedR.Actions())))
+			newRecipe, err := repoTest.DescribeRecipe(ctx, expectedR.Id())
+			Expect(err).To(BeNil())
+			Expect(*newRecipe).To(Equal(expectedR))
 		})
 	})
 })
