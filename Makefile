@@ -1,6 +1,7 @@
-.PHONY: run, build, test-internal
-export GO111MODULE=on
-export GOPROXY=https://proxy.golang.org|direct
+ifneq (,$(wildcard ./.env))
+    include .env
+    export
+endif
 
 .PHONY: run
 run:
@@ -23,6 +24,7 @@ deps:
 	go get github.com/lib/pq@v1.10.2
 	go get github.com/envoyproxy/protoc-gen-validate@v0.6.1
 	go install github.com/envoyproxy/protoc-gen-validate
+	go get -d github.com/pressly/goose/v3/cmd/goose@v3.1.0
 
 .PHONY: build
 build:
@@ -64,3 +66,7 @@ generate-vendor-proto:
 
 .PHONY: all
 all: deps generate-vendor-proto generate-proto build
+
+.PHONY: migrate
+migrate:
+	goose postgres "postgres://${DB_USERNAME}:${DB_PASSWORD}@${DB_MIGRATE_HOST}:${DB_PORT}/${DB_DATABASE}?sslmode=disable" up

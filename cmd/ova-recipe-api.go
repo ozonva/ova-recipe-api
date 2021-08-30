@@ -2,9 +2,11 @@ package main
 
 import (
 	"fmt"
+	"github.com/joho/godotenv"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
 	"net"
+	"os"
 	"ova-recipe-api/internal/api"
 	"ova-recipe-api/internal/repo"
 	recipeApi "ova-recipe-api/pkg/api/github.com/ozonva/ova-recipe-api/pkg/api"
@@ -13,7 +15,19 @@ import (
 func main() {
 	fmt.Println("Hi, i am ova-recipe-api!")
 
-	db, openDbErr := repo.OpenDb("postgres://admin:12345678@db:5432/recipe_api?sslmode=disable")
+	if loadEnvErr := godotenv.Load(); loadEnvErr != nil {
+		log.Fatal().Msgf("Can not load .env file, error: %s", loadEnvErr)
+	}
+	dsn := fmt.Sprintf(
+		"postgres://%s:%s@%s:%s/%s?sslmode=disable",
+		os.Getenv("DB_USERNAME"),
+		os.Getenv("DB_PASSWORD"),
+		os.Getenv("DB_HOST"),
+		os.Getenv("DB_PORT"),
+		os.Getenv("DB_DATABASE"),
+	)
+
+	db, openDbErr := repo.OpenDb(dsn)
 	if openDbErr != nil {
 		log.Fatal().Msgf("Can not open db, %s", openDbErr)
 	}
