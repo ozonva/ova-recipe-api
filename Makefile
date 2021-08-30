@@ -8,6 +8,7 @@ run:
 
 .PHONY: deps
 deps:
+	go get github.com/DATA-DOG/go-sqlmock@v1.5.0
 	go get github.com/onsi/ginkgo@v1.16.4
 	go get github.com/onsi/gomega@v1.16.0
 	go get github.com/golang/mock@v1.6.0

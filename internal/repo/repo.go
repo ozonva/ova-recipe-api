@@ -25,15 +25,16 @@ type RecipeRepo interface {
 	RemoveRecipe(ctx context.Context, recipeId uint64) error
 }
 
-func New(dsn string) (RecipeRepo, error) {
-	db, err := sqlx.Open("pgx", dsn)
-	if err != nil {
+func OpenDb(dsn string) (*sql.DB, error) {
+	return sql.Open("pgx", dsn)
+}
+
+func New(db *sql.DB) (RecipeRepo, error) {
+	newDb := sqlx.NewDb(db, "pgx")
+	if err := db.Ping(); err != nil {
 		return nil, err
 	}
-	if err = db.Ping(); err != nil {
-		return nil, err
-	}
-	return &repo{db: db}, nil
+	return &repo{db: newDb}, nil
 }
 
 type repo struct {

@@ -13,9 +13,13 @@ import (
 func main() {
 	fmt.Println("Hi, i am ova-recipe-api!")
 
-	recipeRepo, err := repo.New("postgres://admin:12345678@db:5432/recipe_api?sslmode=disable")
-	if err != nil {
-		log.Fatal().Msgf("Can not create recipeRepo, %s", err)
+	db, openDbErr := repo.OpenDb("postgres://admin:12345678@db:5432/recipe_api?sslmode=disable")
+	if openDbErr != nil {
+		log.Fatal().Msgf("Can not open db, %s", openDbErr)
+	}
+	recipeRepo, newRepoErr := repo.New(db)
+	if newRepoErr != nil {
+		log.Fatal().Msgf("Can not create recipeRepo, %s", newRepoErr)
 	}
 
 	listen, err := net.Listen("tcp", ":8080")

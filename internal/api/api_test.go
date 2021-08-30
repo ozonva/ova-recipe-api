@@ -64,10 +64,10 @@ var _ = Describe("Api", func() {
 			})
 			It("should return new recipe id", func() {
 				req := recipeApi.CreateRecipeRequestV1{
-					UserId: expectedRecipe.UserId(),
-					Name: expectedRecipe.Name(),
+					UserId:      expectedRecipe.UserId(),
+					Name:        expectedRecipe.Name(),
 					Description: expectedRecipe.Description(),
-					Actions: expectedRecipe.Actions(),
+					Actions:     expectedRecipe.Actions(),
 				}
 				newRecipeResponse, err := client.CreateRecipeV1(ctx, &req)
 				Expect(err).To(BeNil())
@@ -83,10 +83,10 @@ var _ = Describe("Api", func() {
 			})
 			It("should return error", func() {
 				req := recipeApi.CreateRecipeRequestV1{
-					UserId: expectedRecipe.UserId(),
-					Name: expectedRecipe.Name(),
+					UserId:      expectedRecipe.UserId(),
+					Name:        expectedRecipe.Name(),
 					Description: expectedRecipe.Description(),
-					Actions: expectedRecipe.Actions(),
+					Actions:     expectedRecipe.Actions(),
 				}
 				newRecipeResponse, err := client.CreateRecipeV1(ctx, &req)
 				Expect(err.Error()).To(ContainSubstring(expectedError.Error()))
@@ -99,10 +99,10 @@ var _ = Describe("Api", func() {
 			})
 			It("should return error", func() {
 				req := recipeApi.CreateRecipeRequestV1{
-					UserId: 0, // invalid id
-					Name: "test name",
+					UserId:      0, // invalid id
+					Name:        "test name",
 					Description: "test description",
-					Actions: []string{"testOne", "testTwo"},
+					Actions:     []string{"testOne", "testTwo"},
 				}
 				newRecipeResponse, err := client.CreateRecipeV1(ctx, &req)
 				Expect(err.Error()).To(ContainSubstring("invalid CreateRecipeRequestV1.UserId: value must be greater than 0"))
