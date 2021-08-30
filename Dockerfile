@@ -9,4 +9,5 @@ FROM alpine:latest
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY --from=builder /app/bin/ova-recipe-api .
+COPY --from=builder /app/.env .
 CMD ["/app/ova-recipe-api"]
