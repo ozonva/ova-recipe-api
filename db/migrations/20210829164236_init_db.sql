@@ -1,5 +1,5 @@
 -- +goose Up
-create table recipe (
+create table if not exists recipe (
     id bigserial primary key,
     user_id bigint,
     name text not null unique,
