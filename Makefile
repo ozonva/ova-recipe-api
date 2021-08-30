@@ -1,5 +1,3 @@
-LOCAL_BIN:=$(CURDIR)/bin
-
 .PHONY: run, build, test-internal
 export GO111MODULE=on
 export GOPROXY=https://proxy.golang.org|direct
