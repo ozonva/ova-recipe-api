@@ -10,8 +10,9 @@ import (
 
 func (s *GRPCServer) ListRecipesV1(ctx context.Context, req *recipeApi.ListRecipesRequestV1) (*recipeApi.ListRecipesResponseV1, error) {
 	log.Info().Msgf("Receive new list request: %s", req.String())
-	if err := req.Validate(); err != nil {
-		return nil, status.Error(codes.InvalidArgument, err.Error())
+	if validationErr := req.Validate(); validationErr != nil {
+		log.Error().Msgf("Invalid list recipes request, error: %s", validationErr)
+		return nil, status.Error(codes.InvalidArgument, validationErr.Error())
 	}
 	dbRecipes, err := s.recipeRepo.ListRecipes(ctx, req.Limit, req.Offset)
 	if err != nil {

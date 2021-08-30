@@ -11,8 +11,9 @@ import (
 
 func (s *GRPCServer) CreateRecipeV1(ctx context.Context, req *recipeApi.CreateRecipeRequestV1) (*recipeApi.CreateRecipeResponseV1, error) {
 	log.Info().Msgf("Receive new create request: %s", req.String())
-	if err := req.Validate(); err != nil {
-		return nil, status.Error(codes.InvalidArgument, err.Error())
+	if validationErr := req.Validate(); validationErr != nil {
+		log.Error().Msgf("Invalid create recipe request, error: %s", validationErr)
+		return nil, status.Error(codes.InvalidArgument, validationErr.Error())
 	}
 	newRecipeId, err := s.recipeRepo.AddRecipe(ctx, recipe.New(0, req.UserId, req.Name, req.Description, req.Actions))
 	if err != nil {

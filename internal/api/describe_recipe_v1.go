@@ -10,8 +10,9 @@ import (
 
 func (s *GRPCServer) DescribeRecipeV1(ctx context.Context, req *recipeApi.DescribeRecipeRequestV1) (*recipeApi.DescribeRecipeResponseV1, error) {
 	log.Info().Msgf("Receive new describe request: %s", req.String())
-	if err := req.Validate(); err != nil {
-		return nil, status.Error(codes.InvalidArgument, err.Error())
+	if validationErr := req.Validate(); validationErr != nil {
+		log.Error().Msgf("Invalid describe recipe request, error: %s", validationErr)
+		return nil, status.Error(codes.InvalidArgument, validationErr.Error())
 	}
 	dbRecipe, err := s.recipeRepo.DescribeRecipe(ctx, req.RecipeId)
 	if err != nil {

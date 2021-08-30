@@ -18,7 +18,7 @@ message CreateRecipeRequestV1 {
   uint64 user_id          = 1 [(validate.rules).uint64.gt = 0];
   string name             = 2 [(validate.rules).string.min_len = 1];
   string description      = 3 [(validate.rules).string.min_len = 1];
-  repeated string actions = 4;
+  repeated string actions = 4 [(validate.rules).repeated.min_items = 1, (validate.rules).repeated.items.string.min_len = 1];
 }
 
 message CreateRecipeResponseV1 {
