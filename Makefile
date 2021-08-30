@@ -53,12 +53,16 @@ generate-vendor-proto:
 	mkdir -p vendor.protogen
 	mkdir -p vendor.protogen/api
 	cp api/api.proto vendor.protogen/api/api.proto
-	git clone https://github.com/googleapis/googleapis vendor.protogen/googleapis &&\
-	mkdir -p vendor.protogen/google/ &&\
-	mv vendor.protogen/googleapis/google/api vendor.protogen/google &&\
-	rm -rf vendor.protogen/googleapis ;\
-	mkdir -p vendor.protogen/github.com/envoyproxy &&\
-	git clone https://github.com/envoyproxy/protoc-gen-validate vendor.protogen/github.com/envoyproxy/protoc-gen-validate ;\
+	@if [ ! -d vendor.protogen/google ]; then \
+		git clone https://github.com/googleapis/googleapis vendor.protogen/googleapis &&\
+		mkdir -p vendor.protogen/google/ &&\
+		mv vendor.protogen/googleapis/google/api vendor.protogen/google &&\
+		rm -rf vendor.protogen/googleapis ;\
+	fi
+	@if [ ! -d vendor.protogen/github.com/envoyproxy ]; then \
+		mkdir -p vendor.protogen/github.com/envoyproxy &&\
+		git clone https://github.com/envoyproxy/protoc-gen-validate vendor.protogen/github.com/envoyproxy/protoc-gen-validate ;\
+	fi
 
 .PHONY: all
 all: deps generate-vendor-proto generate-proto build
