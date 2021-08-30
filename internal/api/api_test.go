@@ -93,5 +93,21 @@ var _ = Describe("Api", func() {
 				Expect(newRecipeResponse).To(BeNil())
 			})
 		})
+		When("Invalid userId", func() {
+			BeforeEach(func() {
+				mockRepo.EXPECT().AddRecipe(gomock.Any(), gomock.Any()).Times(0)
+			})
+			It("should return error", func() {
+				req := recipeApi.CreateRecipeRequestV1{
+					UserId: 0, // invalid id
+					Name: "test name",
+					Description: "test description",
+					Actions: []string{"testOne", "testTwo"},
+				}
+				newRecipeResponse, err := client.CreateRecipeV1(ctx, &req)
+				Expect(err.Error()).To(ContainSubstring("invalid CreateRecipeRequestV1.UserId: value must be greater than 0"))
+				Expect(newRecipeResponse).To(BeNil())
+			})
+		})
 	})
 })

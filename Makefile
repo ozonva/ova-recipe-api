@@ -20,6 +20,8 @@ deps:
 	go get github.com/jackc/pgx@v3.6.2
 	go get github.com/jmoiron/sqlx@v1.3.4
 	go get github.com/lib/pq@v1.10.2
+	go get github.com/envoyproxy/protoc-gen-validate@v0.6.1
+	go install github.com/envoyproxy/protoc-gen-validate
 
 .PHONY: build
 build:
@@ -34,9 +36,30 @@ test-internal:
 	go test -race ./internal/...
 	ginkgo -race ./internal/...
 
-.PHONY: generate
-generate:
-	protoc \
+.PHONY: generate-proto
+generate-proto:
+	protoc -I vendor.protogen \
 	--go_out=pkg/api --go_opt=paths=import \
 	--go-grpc_out=pkg/api --go-grpc_opt=paths=import \
+	--validate_out lang=go:pkg/api \
 	api/api.proto
+
+
+.PHONY: generate-vendor-proto
+generate-vendor-proto:
+	mkdir -p vendor.protogen
+	mkdir -p vendor.protogen/api
+	cp api/api.proto vendor.protogen/api/api.proto
+	@if [ ! -d vendor.protogen/google ]; then \
+		git clone https://github.com/googleapis/googleapis vendor.protogen/googleapis &&\
+		mkdir -p vendor.protogen/google/ &&\
+		mv vendor.protogen/googleapis/google/api vendor.protogen/google &&\
+		rm -rf vendor.protogen/googleapis ;\
+	fi
+	@if [ ! -d vendor.protogen/github.com/envoyproxy ]; then \
+		mkdir -p vendor.protogen/github.com/envoyproxy &&\
+		git clone https://github.com/envoyproxy/protoc-gen-validate vendor.protogen/github.com/envoyproxy/protoc-gen-validate ;\
+	fi
+
+.PHONY: all
+all: deps generate-vendor-proto generate-proto build

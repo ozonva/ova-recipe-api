@@ -1,5 +1,8 @@
 syntax = "proto3";
 
+import "google/api/annotations.proto";
+import "github.com/envoyproxy/protoc-gen-validate/validate/validate.proto";
+
 package ova.recipe.api;
 
 option go_package = "github.com/ozonva/ova-recipe-api/pkg/api";
@@ -12,25 +15,25 @@ service OvaRecipeApi {
 }
 
 message CreateRecipeRequestV1 {
-  uint64 user_id          = 1;
-  string name             = 2;
-  string description      = 3;
+  uint64 user_id          = 1 [(validate.rules).uint64.gt = 0];
+  string name             = 2 [(validate.rules).string.min_len = 1];
+  string description      = 3 [(validate.rules).string.min_len = 1];
   repeated string actions = 4;
 }
 
 message CreateRecipeResponseV1 {
-  uint64 recipe_id = 1;
+  uint64 recipe_id = 1 [(validate.rules).uint64.gt = 0];
 }
 
 message DescribeRecipeRequestV1 {
-  uint64 recipe_id = 1;
+  uint64 recipe_id = 1 [(validate.rules).uint64.gt = 0];
 }
 
 message RecipeV1 {
-  uint64 recipe_id        = 1;
-  uint64 user_id          = 2;
-  string name             = 3;
-  string description      = 4;
+  uint64 recipe_id        = 1 [(validate.rules).uint64.gt = 0];
+  uint64 user_id          = 2 [(validate.rules).uint64.gt = 0];
+  string name             = 3 [(validate.rules).string.min_len = 1];
+  string description      = 4 [(validate.rules).string.min_len = 1];
   repeated string actions = 5;
 }
 
@@ -39,7 +42,7 @@ message DescribeRecipeResponseV1 {
 }
 
 message ListRecipesRequestV1 {
-  uint64 limit  = 1;
+  uint64 limit  = 1 [(validate.rules).uint64.gt = 0];
   uint64 offset = 2;
 }
 
@@ -48,9 +51,9 @@ message ListRecipesResponseV1 {
 }
 
 message RemoveRecipeRequestV1 {
-  uint64 recipe_id = 1;
+  uint64 recipe_id = 1 [(validate.rules).uint64.gt = 0];
 }
 
 message RemoveRecipesResponseV1 {
-  uint64 recipe_id = 1;
+  uint64 recipe_id = 1 [(validate.rules).uint64.gt = 0];
 }
