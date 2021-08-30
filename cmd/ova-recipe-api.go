@@ -13,7 +13,7 @@ import (
 func main() {
 	fmt.Println("Hi, i am ova-recipe-api!")
 
-	recipeRepo, err := repo.New("postgres://admin:12345678@localhost:5432/recipe_api?sslmode=disable")
+	recipeRepo, err := repo.New("postgres://admin:12345678@db:5432/recipe_api?sslmode=disable")
 	if err != nil {
 		log.Fatal().Msgf("Can not create recipeRepo, %s", err)
 	}
