@@ -14,9 +14,12 @@ deps:
 	go get github.com/rs/zerolog/log@v1.23.0
 	go get google.golang.org/grpc@v1.40.0
 	go get -d github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@v2.5.0
-	go get github.com/golang/protobuf/proto@v1.5.2
+	go get google.golang.org/protobuf@v1.27.1
 	go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.27.1
 	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.1.0
+	go get github.com/jackc/pgx@v3.6.2
+	go get github.com/jmoiron/sqlx@v1.3.4
+	go get github.com/lib/pq@v1.10.2
 
 .PHONY: build
 build:
