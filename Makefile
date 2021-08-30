@@ -10,17 +10,15 @@ run:
 
 .PHONY: deps
 deps:
-	go get -u github.com/onsi/ginkgo
-	go get -u github.com/onsi/gomega
-	go get -u github.com/golang/mock
-	go get -u github.com/rs/zerolog/log
-	go get -u github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway
-	go get -u github.com/golang/protobuf/proto
-	go get -u github.com/golang/protobuf/protoc-gen-go
-	go get -u google.golang.org/grpc
-	go get -u google.golang.org/grpc/cmd/protoc-gen-go-grpc
-	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc
-	go install github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
+	go get github.com/onsi/ginkgo@v1.16.4
+	go get github.com/onsi/gomega@v1.16.0
+	go get github.com/golang/mock@v1.6.0
+	go get github.com/rs/zerolog/log@v1.23.0
+	go get google.golang.org/grpc@v1.40.0
+	go get -d github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@v2.5.0
+	go get github.com/golang/protobuf/proto@v1.5.2
+	go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.27.1
+	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.1.0
 
 .PHONY: build
 build:
