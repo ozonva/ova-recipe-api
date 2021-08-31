@@ -5,6 +5,7 @@
 package repo
 
 import (
+	context "context"
 	recipe "ova-recipe-api/internal/recipe"
 	reflect "reflect"
 
@@ -34,6 +35,21 @@ func (m *MockRecipeRepo) EXPECT() *MockRecipeRepoMockRecorder {
 	return m.recorder
 }
 
+// AddRecipe mocks base method.
+func (m *MockRecipeRepo) AddRecipe(arg0 context.Context, arg1 recipe.Recipe) (uint64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AddRecipe", arg0, arg1)
+	ret0, _ := ret[0].(uint64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// AddRecipe indicates an expected call of AddRecipe.
+func (mr *MockRecipeRepoMockRecorder) AddRecipe(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddRecipe", reflect.TypeOf((*MockRecipeRepo)(nil).AddRecipe), arg0, arg1)
+}
+
 // AddRecipes mocks base method.
 func (m *MockRecipeRepo) AddRecipes(arg0 []recipe.Recipe) error {
 	m.ctrl.T.Helper()
@@ -49,31 +65,45 @@ func (mr *MockRecipeRepoMockRecorder) AddRecipes(arg0 interface{}) *gomock.Call 
 }
 
 // DescribeRecipe mocks base method.
-func (m *MockRecipeRepo) DescribeRecipe(arg0 uint64) (*recipe.Recipe, error) {
+func (m *MockRecipeRepo) DescribeRecipe(arg0 context.Context, arg1 uint64) (*recipe.Recipe, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DescribeRecipe", arg0)
+	ret := m.ctrl.Call(m, "DescribeRecipe", arg0, arg1)
 	ret0, _ := ret[0].(*recipe.Recipe)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // DescribeRecipe indicates an expected call of DescribeRecipe.
-func (mr *MockRecipeRepoMockRecorder) DescribeRecipe(arg0 interface{}) *gomock.Call {
+func (mr *MockRecipeRepoMockRecorder) DescribeRecipe(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DescribeRecipe", reflect.TypeOf((*MockRecipeRepo)(nil).DescribeRecipe), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DescribeRecipe", reflect.TypeOf((*MockRecipeRepo)(nil).DescribeRecipe), arg0, arg1)
 }
 
 // ListRecipes mocks base method.
-func (m *MockRecipeRepo) ListRecipes(arg0, arg1 uint64) ([]recipe.Recipe, error) {
+func (m *MockRecipeRepo) ListRecipes(arg0 context.Context, arg1, arg2 uint64) ([]recipe.Recipe, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ListRecipes", arg0, arg1)
+	ret := m.ctrl.Call(m, "ListRecipes", arg0, arg1, arg2)
 	ret0, _ := ret[0].([]recipe.Recipe)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ListRecipes indicates an expected call of ListRecipes.
-func (mr *MockRecipeRepoMockRecorder) ListRecipes(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockRecipeRepoMockRecorder) ListRecipes(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListRecipes", reflect.TypeOf((*MockRecipeRepo)(nil).ListRecipes), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListRecipes", reflect.TypeOf((*MockRecipeRepo)(nil).ListRecipes), arg0, arg1, arg2)
+}
+
+// RemoveRecipe mocks base method.
+func (m *MockRecipeRepo) RemoveRecipe(arg0 context.Context, arg1 uint64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RemoveRecipe", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// RemoveRecipe indicates an expected call of RemoveRecipe.
+func (mr *MockRecipeRepoMockRecorder) RemoveRecipe(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RemoveRecipe", reflect.TypeOf((*MockRecipeRepo)(nil).RemoveRecipe), arg0, arg1)
 }

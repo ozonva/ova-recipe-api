@@ -1,0 +1,21 @@
+version: '3.1'
+services:
+  db:
+    image: postgres
+    restart: always
+    volumes:
+      - /home/f0rtung/Downloads/pgdata/:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      - db
+    links:
+      - db
+    ports:
+      - "8080:8080"
