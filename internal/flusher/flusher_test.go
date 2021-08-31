@@ -16,9 +16,9 @@ var _ = Describe("Flusher", func() {
 		mockRepo    *repo.MockRecipeRepo
 		testFlusher flusher.Flusher
 		recipes     = []recipe.Recipe{
-			recipe.New(1, 1, "", "", []recipe.Action{}),
-			recipe.New(2, 2, "", "", []recipe.Action{}),
-			recipe.New(3, 3, "", "", []recipe.Action{}),
+			recipe.New(1, 1, "", "", []string{}),
+			recipe.New(2, 2, "", "", []string{}),
+			recipe.New(3, 3, "", "", []string{}),
 		}
 	)
 	BeforeEach(func() {

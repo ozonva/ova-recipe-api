@@ -2,7 +2,6 @@ package recipe
 
 import (
 	"fmt"
-	"github.com/golang/mock/gomock"
 	"testing"
 )
 
@@ -32,59 +31,5 @@ func TestRecipeString(t *testing.T) {
 	expectedString := fmt.Sprintf("Recipe('%s')", expectedName)
 	if r.String() != expectedString {
 		t.Errorf("Recipe String '%s' not equal expected string '%s'", r.String(), expectedString)
-	}
-}
-
-func TestRecipeCookCallDoActionWithoutError(t *testing.T) {
-	mockCtrl := gomock.NewController(t)
-	defer mockCtrl.Finish()
-	mockAction := NewMockAction(mockCtrl)
-	mockAction.EXPECT().DoAction().Return(nil).Times(1)
-	r := New(1, 1, "test name", "test description", []Action{mockAction})
-	if err := r.Cook(); err != nil {
-		t.Errorf("Recipe Cook method returns not nil error: '%s'", err)
-	}
-}
-
-func TestRecipeCookDoActionReturnsError(t *testing.T) {
-	mockCtrl := gomock.NewController(t)
-	defer mockCtrl.Finish()
-	mockActionOne := NewMockAction(mockCtrl)
-	expectedError := fmt.Errorf("test expected error")
-	mockActionOne.EXPECT().DoAction().Return(expectedError).Times(1)
-	r := New(1, 1, "test name", "test description", []Action{mockActionOne})
-	if err := r.Cook(); err != expectedError {
-		t.Errorf("Error '%s' not equal expected error '%s'", err, expectedError)
-	}
-}
-
-func TestRecipeCookSeveralActionsWOErrors(t *testing.T) {
-	mockCtrl := gomock.NewController(t)
-	defer mockCtrl.Finish()
-	mockActionOne := NewMockAction(mockCtrl)
-	mockActionOne.EXPECT().DoAction().Return(nil).Times(1)
-	mockActionTwo := NewMockAction(mockCtrl)
-	mockActionTwo.EXPECT().DoAction().Return(nil).Times(1)
-	mockActionThree := NewMockAction(mockCtrl)
-	mockActionThree.EXPECT().DoAction().Return(nil).Times(1)
-	r := New(1, 1, "test name", "test description", []Action{mockActionOne, mockActionTwo, mockActionThree})
-	if err := r.Cook(); err != nil {
-		t.Errorf("Recipe Cook method returns not nil error: '%s'", err)
-	}
-}
-
-func TestRecipeCookSeveralActionsWithError(t *testing.T) {
-	mockCtrl := gomock.NewController(t)
-	defer mockCtrl.Finish()
-	mockActionOne := NewMockAction(mockCtrl)
-	mockActionOne.EXPECT().DoAction().Return(nil).Times(1)
-	expectedError := fmt.Errorf("test expected error")
-	mockActionTwo := NewMockAction(mockCtrl)
-	mockActionTwo.EXPECT().DoAction().Return(expectedError).Times(1)
-	mockActionThree := NewMockAction(mockCtrl)
-	mockActionThree.EXPECT().DoAction().Return(nil).Times(0)
-	r := New(1, 1, "test name", "test description", []Action{mockActionOne, mockActionTwo, mockActionThree})
-	if err := r.Cook(); err != expectedError {
-		t.Errorf("Error '%s' not equal expected error '%s'", err, expectedError)
 	}
 }

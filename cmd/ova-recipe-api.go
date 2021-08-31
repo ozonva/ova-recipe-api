@@ -2,62 +2,47 @@ package main
 
 import (
 	"fmt"
-	"io"
+	"github.com/joho/godotenv"
+	"github.com/rs/zerolog/log"
+	"google.golang.org/grpc"
+	"net"
 	"os"
-	"ova-recipe-api/internal/recipe"
+	"ova-recipe-api/internal/api"
+	"ova-recipe-api/internal/repo"
+	recipeApi "ova-recipe-api/pkg/api/github.com/ozonva/ova-recipe-api/pkg/api"
 )
-
-type MockCookAction struct {
-	name string
-}
-
-func (mca *MockCookAction) String() string {
-	return fmt.Sprintf("action name: '%s'", mca.name)
-}
-
-func (mca *MockCookAction) DoAction() error {
-	fmt.Printf("do action '%s'\n", mca.name)
-	return nil
-}
-
-func ReadFileLoop(loopCount uint64, filePath string) {
-	readFileFn := func(filePath string) ([]byte, error) {
-		file, err := os.Open(filePath)
-		if err != nil {
-			return nil, err
-		}
-		defer func(file *os.File) {
-			if err := file.Close(); err != nil {
-				fmt.Printf("Can not close file '%s', error: '%s'", filePath, err)
-			}
-		}(file)
-		return io.ReadAll(file)
-	}
-	for idx := uint64(0); idx < loopCount; idx++ {
-		if fileContent, err := readFileFn(filePath); err != nil {
-			fmt.Printf("Can not read file, error: '%s'\n", err)
-		} else {
-			fmt.Printf("File content: '%s'\n", fileContent)
-		}
-	}
-}
 
 func main() {
 	fmt.Println("Hi, i am ova-recipe-api!")
-	ReadFileLoop(1, "./Makefile")
-	cookieRecipe := recipe.New(
-		1,
-		1,
-		"Oatmeal cookies",
-		"The best oatmeal cookies from the chef",
-		[]recipe.Action{&MockCookAction{"Start to bake"},
-			&MockCookAction{"Continue to bake"},
-			&MockCookAction{"Finish to bake"}},
+
+	if loadEnvErr := godotenv.Load(); loadEnvErr != nil {
+		log.Fatal().Msgf("Can not load .env file, error: %s", loadEnvErr)
+	}
+	dsn := fmt.Sprintf(
+		"postgres://%s:%s@%s:%s/%s?sslmode=disable",
+		os.Getenv("DB_USERNAME"),
+		os.Getenv("DB_PASSWORD"),
+		os.Getenv("DB_HOST"),
+		os.Getenv("DB_PORT"),
+		os.Getenv("DB_DATABASE"),
 	)
-	fmt.Println("Let's cook oatmeal cookies")
-	if err := cookieRecipe.Cook(); err != nil {
-		fmt.Printf("Can not cook %s", cookieRecipe.String())
-	} else {
-		fmt.Printf("%s is ready", cookieRecipe.String())
+
+	db, openDbErr := repo.OpenDb(dsn)
+	if openDbErr != nil {
+		log.Fatal().Msgf("Can not open db, %s", openDbErr)
+	}
+	recipeRepo, newRepoErr := repo.New(db)
+	if newRepoErr != nil {
+		log.Fatal().Msgf("Can not create recipeRepo, %s", newRepoErr)
+	}
+
+	listen, err := net.Listen("tcp", ":8080")
+	if err != nil {
+		log.Fatal().Msgf("Failed to listen server %s", err)
+	}
+	service := grpc.NewServer()
+	recipeApi.RegisterOvaRecipeApiServer(service, api.NewOvaRecipeApiServer(recipeRepo))
+	if err = service.Serve(listen); err != nil {
+		log.Fatal().Msgf("failed to serve: %s", err)
 	}
 }
