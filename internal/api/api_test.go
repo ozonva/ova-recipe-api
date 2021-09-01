@@ -110,4 +110,35 @@ var _ = Describe("Api", func() {
 			})
 		})
 	})
+	Describe("Do multi create query", func() {
+		When("recipes count > batch size", func() {
+			expectedRecipes := []recipe.Recipe{
+				recipe.New(0, 1, "test name", "test description", []string{"testOne", "testTwo"}),
+				recipe.New(0, 2, "test name", "test description", []string{"testOne", "testTwo"}),
+				recipe.New(0, 3, "test name", "test description", []string{"testOne", "testTwo"}),
+			}
+			BeforeEach(func() {
+				gomock.InOrder(
+					mockRepo.EXPECT().AddRecipes(gomock.Any(), expectedRecipes[:2]).Return(nil).Times(1),
+					mockRepo.EXPECT().AddRecipes(gomock.Any(), expectedRecipes[2:]).Return(nil).Times(1),
+				)
+			})
+			It("should return new recipe id", func() {
+				recipes := make([]*recipeApi.CreateRecipeV1, 0, len(expectedRecipes))
+				for _, expectedRecipe := range expectedRecipes {
+					recipes = append(recipes, &recipeApi.CreateRecipeV1{
+						UserId:      expectedRecipe.UserId(),
+						Name:        expectedRecipe.Name(),
+						Description: expectedRecipe.Description(),
+						Actions:     expectedRecipe.Actions(),
+					})
+				}
+				req := recipeApi.MultiCreateRecipeRequestV1{
+					Recipes: recipes,
+				}
+				_, err := client.MultiCreateRecipeV1(ctx, &req)
+				Expect(err).To(BeNil())
+			})
+		})
+	})
 })

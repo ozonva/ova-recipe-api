@@ -14,9 +14,9 @@ import (
 var _ = Describe("Repo", func() {
 	var (
 		ctx       context.Context
-		dbMock        *sql.DB
+		dbMock    *sql.DB
 		queryMock sqlmock.Sqlmock
-		repoTest repo.RecipeRepo
+		repoTest  repo.RecipeRepo
 	)
 	BeforeEach(func() {
 		ctx = context.Background()

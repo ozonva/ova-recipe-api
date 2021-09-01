@@ -19,7 +19,7 @@ const (
 
 type RecipeRepo interface {
 	AddRecipe(ctx context.Context, newRecipe recipe.Recipe) (uint64, error)
-	AddRecipes(recipes []recipe.Recipe) error
+	AddRecipes(ctx context.Context, recipes []recipe.Recipe) error
 	ListRecipes(ctx context.Context, limit, offset uint64) ([]recipe.Recipe, error)
 	DescribeRecipe(ctx context.Context, recipeId uint64) (*recipe.Recipe, error)
 	RemoveRecipe(ctx context.Context, recipeId uint64) error
@@ -41,10 +41,12 @@ type repo struct {
 	db *sqlx.DB
 }
 
+const insertQuery = "INSERT INTO recipe(user_id, name, description, actions) VALUES ($1, $2, $3, $4) RETURNING id"
+
 func (r *repo) AddRecipe(ctx context.Context, newRecipe recipe.Recipe) (uint64, error) {
 	row := r.db.QueryRowxContext(
 		ctx,
-		"INSERT INTO recipe(user_id, name, description, actions) VALUES ($1, $2, $3, $4) RETURNING id",
+		insertQuery,
 		newRecipe.UserId(), newRecipe.Name(), newRecipe.Description(), pq.Array(newRecipe.Actions()),
 	)
 	var newRecipeId uint64
@@ -54,8 +56,24 @@ func (r *repo) AddRecipe(ctx context.Context, newRecipe recipe.Recipe) (uint64, 
 	return newRecipeId, nil
 }
 
-func (r *repo) AddRecipes(_ []recipe.Recipe) error {
-	panic("Not implemented")
+func (r *repo) AddRecipes(ctx context.Context, recipes []recipe.Recipe) error {
+	tx, txErr := r.db.BeginTx(ctx, nil)
+	if txErr != nil {
+		return txErr
+	}
+	stmt, stmtErr := tx.PrepareContext(ctx, insertQuery)
+	if stmtErr != nil {
+		return stmtErr
+	}
+	defer stmt.Close()
+	for _, rec := range recipes {
+		_, execErr := stmt.ExecContext(ctx, rec.UserId(), rec.Name(), rec.Description(), pq.Array(rec.Actions()))
+		if execErr != nil {
+			tx.Rollback()
+			return execErr
+		}
+	}
+	return tx.Commit()
 }
 
 func (r *repo) ListRecipes(ctx context.Context, limit, offset uint64) ([]recipe.Recipe, error) {

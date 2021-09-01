@@ -51,17 +51,17 @@ func (mr *MockRecipeRepoMockRecorder) AddRecipe(arg0, arg1 interface{}) *gomock.
 }
 
 // AddRecipes mocks base method.
-func (m *MockRecipeRepo) AddRecipes(arg0 []recipe.Recipe) error {
+func (m *MockRecipeRepo) AddRecipes(arg0 context.Context, arg1 []recipe.Recipe) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AddRecipes", arg0)
+	ret := m.ctrl.Call(m, "AddRecipes", arg0, arg1)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // AddRecipes indicates an expected call of AddRecipes.
-func (mr *MockRecipeRepoMockRecorder) AddRecipes(arg0 interface{}) *gomock.Call {
+func (mr *MockRecipeRepoMockRecorder) AddRecipes(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddRecipes", reflect.TypeOf((*MockRecipeRepo)(nil).AddRecipes), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddRecipes", reflect.TypeOf((*MockRecipeRepo)(nil).AddRecipes), arg0, arg1)
 }
 
 // DescribeRecipe mocks base method.

@@ -62,6 +62,25 @@ func (m *CreateRecipeRequestV1) Validate() error {
 		}
 	}
 
+	if len(m.GetActions()) < 1 {
+		return CreateRecipeRequestV1ValidationError{
+			field:  "Actions",
+			reason: "value must contain at least 1 item(s)",
+		}
+	}
+
+	for idx, item := range m.GetActions() {
+		_, _ = idx, item
+
+		if utf8.RuneCountInString(item) < 1 {
+			return CreateRecipeRequestV1ValidationError{
+				field:  fmt.Sprintf("Actions[%v]", idx),
+				reason: "value length must be at least 1 runes",
+			}
+		}
+
+	}
+
 	return nil
 }
 
@@ -195,6 +214,200 @@ var _ interface {
 	ErrorName() string
 } = CreateRecipeResponseV1ValidationError{}
 
+// Validate checks the field values on CreateRecipeV1 with the rules defined in
+// the proto definition for this message. If any rules are violated, an error
+// is returned.
+func (m *CreateRecipeV1) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	if m.GetUserId() <= 0 {
+		return CreateRecipeV1ValidationError{
+			field:  "UserId",
+			reason: "value must be greater than 0",
+		}
+	}
+
+	if utf8.RuneCountInString(m.GetName()) < 1 {
+		return CreateRecipeV1ValidationError{
+			field:  "Name",
+			reason: "value length must be at least 1 runes",
+		}
+	}
+
+	if utf8.RuneCountInString(m.GetDescription()) < 1 {
+		return CreateRecipeV1ValidationError{
+			field:  "Description",
+			reason: "value length must be at least 1 runes",
+		}
+	}
+
+	if len(m.GetActions()) < 1 {
+		return CreateRecipeV1ValidationError{
+			field:  "Actions",
+			reason: "value must contain at least 1 item(s)",
+		}
+	}
+
+	for idx, item := range m.GetActions() {
+		_, _ = idx, item
+
+		if utf8.RuneCountInString(item) < 1 {
+			return CreateRecipeV1ValidationError{
+				field:  fmt.Sprintf("Actions[%v]", idx),
+				reason: "value length must be at least 1 runes",
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// CreateRecipeV1ValidationError is the validation error returned by
+// CreateRecipeV1.Validate if the designated constraints aren't met.
+type CreateRecipeV1ValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CreateRecipeV1ValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CreateRecipeV1ValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CreateRecipeV1ValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CreateRecipeV1ValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CreateRecipeV1ValidationError) ErrorName() string { return "CreateRecipeV1ValidationError" }
+
+// Error satisfies the builtin error interface
+func (e CreateRecipeV1ValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCreateRecipeV1.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CreateRecipeV1ValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CreateRecipeV1ValidationError{}
+
+// Validate checks the field values on MultiCreateRecipeRequestV1 with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, an error is returned.
+func (m *MultiCreateRecipeRequestV1) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	if len(m.GetRecipes()) < 1 {
+		return MultiCreateRecipeRequestV1ValidationError{
+			field:  "Recipes",
+			reason: "value must contain at least 1 item(s)",
+		}
+	}
+
+	for idx, item := range m.GetRecipes() {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return MultiCreateRecipeRequestV1ValidationError{
+					field:  fmt.Sprintf("Recipes[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// MultiCreateRecipeRequestV1ValidationError is the validation error returned
+// by MultiCreateRecipeRequestV1.Validate if the designated constraints aren't met.
+type MultiCreateRecipeRequestV1ValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e MultiCreateRecipeRequestV1ValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e MultiCreateRecipeRequestV1ValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e MultiCreateRecipeRequestV1ValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e MultiCreateRecipeRequestV1ValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e MultiCreateRecipeRequestV1ValidationError) ErrorName() string {
+	return "MultiCreateRecipeRequestV1ValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e MultiCreateRecipeRequestV1ValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sMultiCreateRecipeRequestV1.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = MultiCreateRecipeRequestV1ValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = MultiCreateRecipeRequestV1ValidationError{}
+
 // Validate checks the field values on DescribeRecipeRequestV1 with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, an error is returned.
@@ -302,6 +515,25 @@ func (m *RecipeV1) Validate() error {
 			field:  "Description",
 			reason: "value length must be at least 1 runes",
 		}
+	}
+
+	if len(m.GetActions()) < 1 {
+		return RecipeV1ValidationError{
+			field:  "Actions",
+			reason: "value must contain at least 1 item(s)",
+		}
+	}
+
+	for idx, item := range m.GetActions() {
+		_, _ = idx, item
+
+		if utf8.RuneCountInString(item) < 1 {
+			return RecipeV1ValidationError{
+				field:  fmt.Sprintf("Actions[%v]", idx),
+				reason: "value length must be at least 1 runes",
+			}
+		}
+
 	}
 
 	return nil

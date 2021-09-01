@@ -1,6 +1,7 @@
 package flusher
 
 import (
+	"context"
 	"ova-recipe-api/internal/recipe"
 	"ova-recipe-api/internal/repo"
 	"ova-recipe-api/internal/utils"
@@ -21,8 +22,9 @@ type flusher struct {
 
 func (f *flusher) Flush(recipes []recipe.Recipe) []recipe.Recipe {
 	var result []recipe.Recipe
+	ctx := context.Background()
 	for _, recipesChunk := range utils.SplitRecipeSlice(recipes, f.chunkSize) {
-		if err := f.recipeRepo.AddRecipes(recipesChunk); err != nil {
+		if err := f.recipeRepo.AddRecipes(ctx, recipesChunk); err != nil {
 			result = append(result, recipesChunk...)
 		}
 	}
