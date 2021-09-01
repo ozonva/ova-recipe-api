@@ -23,6 +23,7 @@ type RecipeRepo interface {
 	ListRecipes(ctx context.Context, limit, offset uint64) ([]recipe.Recipe, error)
 	DescribeRecipe(ctx context.Context, recipeId uint64) (*recipe.Recipe, error)
 	RemoveRecipe(ctx context.Context, recipeId uint64) error
+	UpdateRecipe(ctx context.Context, newRecipe recipe.Recipe) error
 }
 
 func OpenDb(dsn string) (*sql.DB, error) {
@@ -119,6 +120,29 @@ func (r *repo) DescribeRecipe(ctx context.Context, recipeId uint64) (*recipe.Rec
 
 func (r *repo) RemoveRecipe(ctx context.Context, recipeId uint64) error {
 	result, err := r.db.ExecContext(ctx, "DELETE FROM recipe WHERE id = $1", recipeId)
+	if err != nil {
+		return err
+	}
+	rowsAffected, rowsAffectedErr := result.RowsAffected()
+	if rowsAffectedErr != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return NotFoundError
+	}
+	return nil
+}
+
+
+func (r *repo) UpdateRecipe(ctx context.Context, newRecipe recipe.Recipe) error {
+	result, err := r.db.ExecContext(
+		ctx,
+		"UPDATE recipe SET user_id = $1, name = $2, description = $3, actions = $4 WHERE id = $5",
+		newRecipe.UserId(),
+		newRecipe.Name(),
+		newRecipe.Description(),
+		pq.Array(newRecipe.Actions()),
+		newRecipe.Id())
 	if err != nil {
 		return err
 	}

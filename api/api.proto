@@ -14,6 +14,7 @@ service OvaRecipeApi {
   rpc DescribeRecipeV1(DescribeRecipeRequestV1) returns (DescribeRecipeResponseV1) {}
   rpc ListRecipesV1(ListRecipesRequestV1) returns (ListRecipesResponseV1) {}
   rpc RemoveRecipeV1(RemoveRecipeRequestV1) returns (RemoveRecipesResponseV1) {}
+  rpc UpdateRecipeV1(UpdateRecipeRequestV1) returns (google.protobuf.Empty) {}
 }
 
 message CreateRecipeRequestV1 {
@@ -69,4 +70,8 @@ message RemoveRecipeRequestV1 {
 
 message RemoveRecipesResponseV1 {
   uint64 recipe_id = 1 [(validate.rules).uint64.gt = 0];
+}
+
+message UpdateRecipeRequestV1 {
+  RecipeV1 recipe = 1;
 }

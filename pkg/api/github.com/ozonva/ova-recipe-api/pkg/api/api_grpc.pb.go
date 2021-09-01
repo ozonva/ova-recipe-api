@@ -24,6 +24,7 @@ type OvaRecipeApiClient interface {
 	DescribeRecipeV1(ctx context.Context, in *DescribeRecipeRequestV1, opts ...grpc.CallOption) (*DescribeRecipeResponseV1, error)
 	ListRecipesV1(ctx context.Context, in *ListRecipesRequestV1, opts ...grpc.CallOption) (*ListRecipesResponseV1, error)
 	RemoveRecipeV1(ctx context.Context, in *RemoveRecipeRequestV1, opts ...grpc.CallOption) (*RemoveRecipesResponseV1, error)
+	UpdateRecipeV1(ctx context.Context, in *UpdateRecipeRequestV1, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type ovaRecipeApiClient struct {
@@ -79,6 +80,15 @@ func (c *ovaRecipeApiClient) RemoveRecipeV1(ctx context.Context, in *RemoveRecip
 	return out, nil
 }
 
+func (c *ovaRecipeApiClient) UpdateRecipeV1(ctx context.Context, in *UpdateRecipeRequestV1, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/ova.recipe.api.OvaRecipeApi/UpdateRecipeV1", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OvaRecipeApiServer is the server API for OvaRecipeApi service.
 // All implementations must embed UnimplementedOvaRecipeApiServer
 // for forward compatibility
@@ -88,6 +98,7 @@ type OvaRecipeApiServer interface {
 	DescribeRecipeV1(context.Context, *DescribeRecipeRequestV1) (*DescribeRecipeResponseV1, error)
 	ListRecipesV1(context.Context, *ListRecipesRequestV1) (*ListRecipesResponseV1, error)
 	RemoveRecipeV1(context.Context, *RemoveRecipeRequestV1) (*RemoveRecipesResponseV1, error)
+	UpdateRecipeV1(context.Context, *UpdateRecipeRequestV1) (*emptypb.Empty, error)
 	mustEmbedUnimplementedOvaRecipeApiServer()
 }
 
@@ -109,6 +120,9 @@ func (UnimplementedOvaRecipeApiServer) ListRecipesV1(context.Context, *ListRecip
 }
 func (UnimplementedOvaRecipeApiServer) RemoveRecipeV1(context.Context, *RemoveRecipeRequestV1) (*RemoveRecipesResponseV1, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveRecipeV1 not implemented")
+}
+func (UnimplementedOvaRecipeApiServer) UpdateRecipeV1(context.Context, *UpdateRecipeRequestV1) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateRecipeV1 not implemented")
 }
 func (UnimplementedOvaRecipeApiServer) mustEmbedUnimplementedOvaRecipeApiServer() {}
 
@@ -213,6 +227,24 @@ func _OvaRecipeApi_RemoveRecipeV1_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OvaRecipeApi_UpdateRecipeV1_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateRecipeRequestV1)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OvaRecipeApiServer).UpdateRecipeV1(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ova.recipe.api.OvaRecipeApi/UpdateRecipeV1",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OvaRecipeApiServer).UpdateRecipeV1(ctx, req.(*UpdateRecipeRequestV1))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // OvaRecipeApi_ServiceDesc is the grpc.ServiceDesc for OvaRecipeApi service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -239,6 +271,10 @@ var OvaRecipeApi_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RemoveRecipeV1",
 			Handler:    _OvaRecipeApi_RemoveRecipeV1_Handler,
+		},
+		{
+			MethodName: "UpdateRecipeV1",
+			Handler:    _OvaRecipeApi_UpdateRecipeV1_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
