@@ -133,7 +133,6 @@ func (r *repo) RemoveRecipe(ctx context.Context, recipeId uint64) error {
 	return nil
 }
 
-
 func (r *repo) UpdateRecipe(ctx context.Context, newRecipe recipe.Recipe) error {
 	result, err := r.db.ExecContext(
 		ctx,

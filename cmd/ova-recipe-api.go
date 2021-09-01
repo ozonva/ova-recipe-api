@@ -3,14 +3,23 @@ package main
 import (
 	"fmt"
 	"github.com/joho/godotenv"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
 	"net"
+	"net/http"
 	"os"
 	"ova-recipe-api/internal/api"
 	"ova-recipe-api/internal/repo"
 	recipeApi "ova-recipe-api/pkg/api/github.com/ozonva/ova-recipe-api/pkg/api"
 )
+
+func runPrometheusMetrics() {
+	http.Handle("/metrics", promhttp.Handler())
+	if err := http.ListenAndServe(":8081", nil); err != nil {
+		log.Fatal().Msgf("Failed to start listen to metric requests, error %s", err)
+	}
+}
 
 func main() {
 	fmt.Println("Hi, i am ova-recipe-api!")
@@ -18,6 +27,9 @@ func main() {
 	if loadEnvErr := godotenv.Load(); loadEnvErr != nil {
 		log.Fatal().Msgf("Can not load .env file, error: %s", loadEnvErr)
 	}
+
+	go runPrometheusMetrics()
+
 	dsn := fmt.Sprintf(
 		"postgres://%s:%s@%s:%s/%s?sslmode=disable",
 		os.Getenv("DB_USERNAME"),

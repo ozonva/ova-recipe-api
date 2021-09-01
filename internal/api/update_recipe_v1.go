@@ -21,5 +21,6 @@ func (s *GRPCServer) UpdateRecipeV1(ctx context.Context, req *recipeApi.UpdateRe
 		log.Error().Msgf("Can not update recipe, error: %s", err)
 		return nil, err
 	}
+	s.metrics.incSuccessUpdateRecipeCounter()
 	return &emptypb.Empty{}, nil
 }

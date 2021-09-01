@@ -107,3 +107,17 @@ func (mr *MockRecipeRepoMockRecorder) RemoveRecipe(arg0, arg1 interface{}) *gomo
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RemoveRecipe", reflect.TypeOf((*MockRecipeRepo)(nil).RemoveRecipe), arg0, arg1)
 }
+
+// UpdateRecipe mocks base method.
+func (m *MockRecipeRepo) UpdateRecipe(arg0 context.Context, arg1 recipe.Recipe) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateRecipe", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateRecipe indicates an expected call of UpdateRecipe.
+func (mr *MockRecipeRepoMockRecorder) UpdateRecipe(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateRecipe", reflect.TypeOf((*MockRecipeRepo)(nil).UpdateRecipe), arg0, arg1)
+}

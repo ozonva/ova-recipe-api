@@ -20,5 +20,6 @@ func (s *GRPCServer) CreateRecipeV1(ctx context.Context, req *recipeApi.CreateRe
 		log.Error().Msgf("Can not create new recipe, error: %s", err)
 		return nil, err
 	}
+	s.metrics.incSuccessCreateRecipeCounter()
 	return &recipeApi.CreateRecipeResponseV1{RecipeId: newRecipeId}, nil
 }

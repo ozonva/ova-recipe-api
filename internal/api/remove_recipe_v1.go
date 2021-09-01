@@ -18,5 +18,6 @@ func (s *GRPCServer) RemoveRecipeV1(ctx context.Context, req *recipeApi.RemoveRe
 		log.Error().Msgf("Can not remove recipe, error: %s", err)
 		return nil, err
 	}
+	s.metrics.incSuccessRemoveRecipeCounter()
 	return &recipeApi.RemoveRecipesResponseV1{RecipeId: req.RecipeId}, nil
 }

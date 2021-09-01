@@ -8,8 +8,9 @@ import (
 type GRPCServer struct {
 	recipeApi.OvaRecipeApiServer
 	recipeRepo repo.RecipeRepo
+	metrics    Metrics
 }
 
 func NewOvaRecipeApiServer(recipeRepo repo.RecipeRepo) recipeApi.OvaRecipeApiServer {
-	return &GRPCServer{recipeRepo: recipeRepo}
+	return &GRPCServer{recipeRepo: recipeRepo, metrics: newApiMetrics()}
 }

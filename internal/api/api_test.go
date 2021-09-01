@@ -1,4 +1,4 @@
-package api_test
+package api
 
 import (
 	"context"
@@ -9,7 +9,6 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/test/bufconn"
 	"net"
-	"ova-recipe-api/internal/api"
 	"ova-recipe-api/internal/recipe"
 	"ova-recipe-api/internal/repo"
 	recipeApi "ova-recipe-api/pkg/api/github.com/ozonva/ova-recipe-api/pkg/api"
@@ -22,6 +21,7 @@ var _ = Describe("Api", func() {
 		bufListener *bufconn.Listener
 		mockCtrl    *gomock.Controller
 		mockRepo    *repo.MockRecipeRepo
+		mockMetrics *MockMetrics
 		grpcServer  *grpc.Server
 		ctx         context.Context
 		startWG     sync.WaitGroup
@@ -31,8 +31,9 @@ var _ = Describe("Api", func() {
 	BeforeEach(func() {
 		mockCtrl = gomock.NewController(GinkgoT())
 		mockRepo = repo.NewMockRecipeRepo(mockCtrl)
+		mockMetrics = NewMockMetrics(mockCtrl)
 		grpcServer = grpc.NewServer()
-		recipeApi.RegisterOvaRecipeApiServer(grpcServer, api.NewOvaRecipeApiServer(mockRepo))
+		recipeApi.RegisterOvaRecipeApiServer(grpcServer, &GRPCServer{recipeRepo: mockRepo, metrics: mockMetrics})
 		bufListener = bufconn.Listen(bufSize)
 		startWG.Add(1)
 		go func() {
@@ -60,6 +61,7 @@ var _ = Describe("Api", func() {
 			expectedRecipe := recipe.New(0, 1, "test name", "test description", []string{"testOne", "testTwo"})
 			expectedRecipeId := uint64(1)
 			BeforeEach(func() {
+				mockMetrics.EXPECT().incSuccessCreateRecipeCounter().Times(1)
 				mockRepo.EXPECT().AddRecipe(gomock.Any(), expectedRecipe).Return(expectedRecipeId, nil).Times(1)
 			})
 			It("should return new recipe id", func() {
@@ -78,6 +80,7 @@ var _ = Describe("Api", func() {
 			expectedRecipe := recipe.New(0, 1, "test name", "test description", []string{"testOne", "testTwo"})
 			expectedError := fmt.Errorf("Can not create new recipe. ")
 			BeforeEach(func() {
+				mockMetrics.EXPECT().incSuccessCreateRecipeCounter().Times(0)
 				mockRepo.EXPECT().AddRecipe(gomock.Any(), expectedRecipe).Return(
 					uint64(0), expectedError).Times(1)
 			})
@@ -95,6 +98,7 @@ var _ = Describe("Api", func() {
 		})
 		When("Invalid userId", func() {
 			BeforeEach(func() {
+				mockMetrics.EXPECT().incSuccessCreateRecipeCounter().Times(0)
 				mockRepo.EXPECT().AddRecipe(gomock.Any(), gomock.Any()).Times(0)
 			})
 			It("should return error", func() {
