@@ -10,6 +10,9 @@ import (
 )
 
 func (s *GRPCServer) CreateRecipeV1(ctx context.Context, req *recipeApi.CreateRecipeRequestV1) (*recipeApi.CreateRecipeResponseV1, error) {
+	if sendError := s.sendKafkaCreateEvent(); sendError != nil {
+		log.Error().Msgf("Can not send create event to kafka, error: %s", sendError)
+	}
 	log.Info().Msgf("Receive new create request: %s", req.String())
 	if validationErr := req.Validate(); validationErr != nil {
 		log.Error().Msgf("Invalid create recipe request, error: %s", validationErr)

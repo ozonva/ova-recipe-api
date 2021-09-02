@@ -11,6 +11,9 @@ import (
 )
 
 func (s *GRPCServer) UpdateRecipeV1(ctx context.Context, req *recipeApi.UpdateRecipeRequestV1) (*emptypb.Empty, error) {
+	if sendError := s.sendKafkaUpdateEvent(); sendError != nil {
+		log.Error().Msgf("Can not send update event to kafka, error: %s", sendError)
+	}
 	log.Info().Msgf("Receive new update request: %s", req.String())
 	if validationErr := req.Validate(); validationErr != nil {
 		log.Error().Msgf("Invalid update recipe request, error: %s", validationErr)

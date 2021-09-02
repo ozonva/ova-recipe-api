@@ -14,6 +14,9 @@ import (
 const batchSize = uint(2)
 
 func (s *GRPCServer) MultiCreateRecipeV1(ctx context.Context, req *recipeApi.MultiCreateRecipeRequestV1) (*emptypb.Empty, error) {
+	if sendError := s.sendKafkaCreateEvent(); sendError != nil {
+		log.Error().Msgf("Can not send create event to kafka, error: %s", sendError)
+	}
 	log.Info().Msgf("Receive new multi create request: %s", req.String())
 	if validationErr := req.Validate(); validationErr != nil {
 		log.Error().Msgf("Invalid multi create recipe request, error: %s", validationErr)

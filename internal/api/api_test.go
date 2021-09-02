@@ -9,6 +9,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/test/bufconn"
 	"net"
+	"ova-recipe-api/internal/kafka_client"
 	"ova-recipe-api/internal/recipe"
 	"ova-recipe-api/internal/repo"
 	recipeApi "ova-recipe-api/pkg/api/github.com/ozonva/ova-recipe-api/pkg/api"
@@ -22,6 +23,7 @@ var _ = Describe("Api", func() {
 		mockCtrl    *gomock.Controller
 		mockRepo    *repo.MockRecipeRepo
 		mockMetrics *MockMetrics
+		mockKafka   *kafka_client.MockClient
 		grpcServer  *grpc.Server
 		ctx         context.Context
 		startWG     sync.WaitGroup
@@ -32,8 +34,9 @@ var _ = Describe("Api", func() {
 		mockCtrl = gomock.NewController(GinkgoT())
 		mockRepo = repo.NewMockRecipeRepo(mockCtrl)
 		mockMetrics = NewMockMetrics(mockCtrl)
+		mockKafka = kafka_client.NewMockClient(mockCtrl)
 		grpcServer = grpc.NewServer()
-		recipeApi.RegisterOvaRecipeApiServer(grpcServer, &GRPCServer{recipeRepo: mockRepo, metrics: mockMetrics})
+		recipeApi.RegisterOvaRecipeApiServer(grpcServer, &GRPCServer{recipeRepo: mockRepo, kafkaClient: mockKafka, metrics: mockMetrics})
 		bufListener = bufconn.Listen(bufSize)
 		startWG.Add(1)
 		go func() {
@@ -62,6 +65,7 @@ var _ = Describe("Api", func() {
 			expectedRecipeId := uint64(1)
 			BeforeEach(func() {
 				mockMetrics.EXPECT().incSuccessCreateRecipeCounter().Times(1)
+				mockKafka.EXPECT().SendMessage(gomock.Any()).Times(1)
 				mockRepo.EXPECT().AddRecipe(gomock.Any(), expectedRecipe).Return(expectedRecipeId, nil).Times(1)
 			})
 			It("should return new recipe id", func() {
@@ -80,6 +84,7 @@ var _ = Describe("Api", func() {
 			expectedRecipe := recipe.New(0, 1, "test name", "test description", []string{"testOne", "testTwo"})
 			expectedError := fmt.Errorf("Can not create new recipe. ")
 			BeforeEach(func() {
+				mockKafka.EXPECT().SendMessage(gomock.Any()).Times(1)
 				mockMetrics.EXPECT().incSuccessCreateRecipeCounter().Times(0)
 				mockRepo.EXPECT().AddRecipe(gomock.Any(), expectedRecipe).Return(
 					uint64(0), expectedError).Times(1)
@@ -98,6 +103,7 @@ var _ = Describe("Api", func() {
 		})
 		When("Invalid userId", func() {
 			BeforeEach(func() {
+				mockKafka.EXPECT().SendMessage(gomock.Any()).Times(1)
 				mockMetrics.EXPECT().incSuccessCreateRecipeCounter().Times(0)
 				mockRepo.EXPECT().AddRecipe(gomock.Any(), gomock.Any()).Times(0)
 			})
@@ -123,6 +129,7 @@ var _ = Describe("Api", func() {
 			}
 			BeforeEach(func() {
 				gomock.InOrder(
+					mockKafka.EXPECT().SendMessage(gomock.Any()).Times(1),
 					mockRepo.EXPECT().AddRecipes(gomock.Any(), expectedRecipes[:2]).Return(nil).Times(1),
 					mockRepo.EXPECT().AddRecipes(gomock.Any(), expectedRecipes[2:]).Return(nil).Times(1),
 				)
