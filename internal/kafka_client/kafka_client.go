@@ -3,6 +3,7 @@ package kafka_client
 import (
 	"context"
 	"github.com/segmentio/kafka-go"
+	"sync"
 )
 
 type Client interface {
@@ -15,7 +16,8 @@ func New() Client {
 }
 
 type client struct {
-	conn *kafka.Conn
+	connGuard sync.Mutex
+	conn      *kafka.Conn
 }
 
 func (c *client) Connect(ctx context.Context, dsn string, topic string, partition int) error {
@@ -28,6 +30,8 @@ func (c *client) Connect(ctx context.Context, dsn string, topic string, partitio
 }
 
 func (c *client) SendMessage(message []byte) error {
+	c.connGuard.Lock()
+	defer c.connGuard.Unlock()
 	_, err := c.conn.Write(message)
 	return err
 }

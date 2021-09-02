@@ -39,5 +39,5 @@ func (s *GRPCServer) sendKafkaDeleteEvent() error {
 }
 
 func NewOvaRecipeApiServer(recipeRepo repo.RecipeRepo, kafkaClient kafka_client.Client) recipeApi.OvaRecipeApiServer {
-	return &GRPCServer{recipeRepo: recipeRepo, kafkaClient: kafkaClient ,metrics: newApiMetrics()}
+	return &GRPCServer{recipeRepo: recipeRepo, kafkaClient: kafkaClient, metrics: newApiMetrics()}
 }
