@@ -94,7 +94,7 @@ func main() {
 		"CUDEvents",
 		0)
 	if kafkaConnErr != nil {
-		log.Fatal().Msgf("Can not connect to kafka, %s", newRepoErr)
+		log.Fatal().Msgf("Can not connect to kafka, %s", kafkaConnErr)
 	}
 
 	listen, err := net.Listen("tcp", ":8080")
