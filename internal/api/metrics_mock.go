@@ -33,6 +33,42 @@ func (m *MockMetrics) EXPECT() *MockMetricsMockRecorder {
 	return m.recorder
 }
 
+// incFailCreateRecipeCounter mocks base method.
+func (m *MockMetrics) incFailCreateRecipeCounter() {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "incFailCreateRecipeCounter")
+}
+
+// incFailCreateRecipeCounter indicates an expected call of incFailCreateRecipeCounter.
+func (mr *MockMetricsMockRecorder) incFailCreateRecipeCounter() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "incFailCreateRecipeCounter", reflect.TypeOf((*MockMetrics)(nil).incFailCreateRecipeCounter))
+}
+
+// incFailRemoveRecipeCounter mocks base method.
+func (m *MockMetrics) incFailRemoveRecipeCounter() {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "incFailRemoveRecipeCounter")
+}
+
+// incFailRemoveRecipeCounter indicates an expected call of incFailRemoveRecipeCounter.
+func (mr *MockMetricsMockRecorder) incFailRemoveRecipeCounter() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "incFailRemoveRecipeCounter", reflect.TypeOf((*MockMetrics)(nil).incFailRemoveRecipeCounter))
+}
+
+// incFailUpdateRecipeCounter mocks base method.
+func (m *MockMetrics) incFailUpdateRecipeCounter() {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "incFailUpdateRecipeCounter")
+}
+
+// incFailUpdateRecipeCounter indicates an expected call of incFailUpdateRecipeCounter.
+func (mr *MockMetricsMockRecorder) incFailUpdateRecipeCounter() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "incFailUpdateRecipeCounter", reflect.TypeOf((*MockMetrics)(nil).incFailUpdateRecipeCounter))
+}
+
 // incSuccessCreateRecipeCounter mocks base method.
 func (m *MockMetrics) incSuccessCreateRecipeCounter() {
 	m.ctrl.T.Helper()

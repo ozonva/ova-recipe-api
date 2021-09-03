@@ -8,7 +8,14 @@ import (
 	recipeApi "ova-recipe-api/pkg/api/github.com/ozonva/ova-recipe-api/pkg/api"
 )
 
-func (s *GRPCServer) RemoveRecipeV1(ctx context.Context, req *recipeApi.RemoveRecipeRequestV1) (*recipeApi.RemoveRecipesResponseV1, error) {
+func (s *GRPCServer) RemoveRecipeV1(ctx context.Context, req *recipeApi.RemoveRecipeRequestV1) (resp *recipeApi.RemoveRecipesResponseV1, err error) {
+	defer func() {
+		if err != nil {
+			s.metrics.incFailRemoveRecipeCounter()
+		} else {
+			s.metrics.incSuccessRemoveRecipeCounter()
+		}
+	}()
 	if sendError := s.sendKafkaDeleteEvent(); sendError != nil {
 		log.Error().Msgf("Can not send delete event to kafka, error: %s", sendError)
 	}
@@ -21,6 +28,5 @@ func (s *GRPCServer) RemoveRecipeV1(ctx context.Context, req *recipeApi.RemoveRe
 		log.Error().Msgf("Can not remove recipe, error: %s", err)
 		return nil, err
 	}
-	s.metrics.incSuccessRemoveRecipeCounter()
 	return &recipeApi.RemoveRecipesResponseV1{RecipeId: req.RecipeId}, nil
 }

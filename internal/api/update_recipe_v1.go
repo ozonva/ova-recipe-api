@@ -10,7 +10,14 @@ import (
 	recipeApi "ova-recipe-api/pkg/api/github.com/ozonva/ova-recipe-api/pkg/api"
 )
 
-func (s *GRPCServer) UpdateRecipeV1(ctx context.Context, req *recipeApi.UpdateRecipeRequestV1) (*emptypb.Empty, error) {
+func (s *GRPCServer) UpdateRecipeV1(ctx context.Context, req *recipeApi.UpdateRecipeRequestV1) (resp *emptypb.Empty, err error) {
+	defer func() {
+		if err != nil {
+			s.metrics.incFailUpdateRecipeCounter()
+		} else {
+			s.metrics.incSuccessUpdateRecipeCounter()
+		}
+	}()
 	if sendError := s.sendKafkaUpdateEvent(); sendError != nil {
 		log.Error().Msgf("Can not send update event to kafka, error: %s", sendError)
 	}
@@ -24,6 +31,5 @@ func (s *GRPCServer) UpdateRecipeV1(ctx context.Context, req *recipeApi.UpdateRe
 		log.Error().Msgf("Can not update recipe, error: %s", err)
 		return nil, err
 	}
-	s.metrics.incSuccessUpdateRecipeCounter()
 	return &emptypb.Empty{}, nil
 }

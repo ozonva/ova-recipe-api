@@ -65,6 +65,7 @@ var _ = Describe("Api", func() {
 			expectedRecipeId := uint64(1)
 			BeforeEach(func() {
 				mockMetrics.EXPECT().incSuccessCreateRecipeCounter().Times(1)
+				mockMetrics.EXPECT().incFailCreateRecipeCounter().Times(0)
 				mockKafka.EXPECT().SendMessage(gomock.Any()).Times(1)
 				mockRepo.EXPECT().AddRecipe(gomock.Any(), expectedRecipe).Return(expectedRecipeId, nil).Times(1)
 			})
@@ -86,6 +87,7 @@ var _ = Describe("Api", func() {
 			BeforeEach(func() {
 				mockKafka.EXPECT().SendMessage(gomock.Any()).Times(1)
 				mockMetrics.EXPECT().incSuccessCreateRecipeCounter().Times(0)
+				mockMetrics.EXPECT().incFailCreateRecipeCounter().Times(1)
 				mockRepo.EXPECT().AddRecipe(gomock.Any(), expectedRecipe).Return(
 					uint64(0), expectedError).Times(1)
 			})
@@ -105,6 +107,7 @@ var _ = Describe("Api", func() {
 			BeforeEach(func() {
 				mockKafka.EXPECT().SendMessage(gomock.Any()).Times(1)
 				mockMetrics.EXPECT().incSuccessCreateRecipeCounter().Times(0)
+				mockMetrics.EXPECT().incFailCreateRecipeCounter().Times(1)
 				mockRepo.EXPECT().AddRecipe(gomock.Any(), gomock.Any()).Times(0)
 			})
 			It("should return error", func() {
