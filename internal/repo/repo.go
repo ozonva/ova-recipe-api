@@ -62,6 +62,7 @@ func (r *repo) AddRecipes(ctx context.Context, recipes []recipe.Recipe) error {
 	if txErr != nil {
 		return txErr
 	}
+	defer tx.Rollback()
 	stmt, stmtErr := tx.PrepareContext(ctx, insertQuery)
 	if stmtErr != nil {
 		return stmtErr
@@ -70,7 +71,6 @@ func (r *repo) AddRecipes(ctx context.Context, recipes []recipe.Recipe) error {
 	for _, rec := range recipes {
 		_, execErr := stmt.ExecContext(ctx, rec.UserId(), rec.Name(), rec.Description(), pq.Array(rec.Actions()))
 		if execErr != nil {
-			tx.Rollback()
 			return execErr
 		}
 	}

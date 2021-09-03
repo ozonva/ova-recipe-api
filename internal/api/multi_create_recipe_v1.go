@@ -30,11 +30,12 @@ func (s *GRPCServer) MultiCreateRecipeV1(ctx context.Context, req *recipeApi.Mul
 		newRecipes = append(newRecipes, recipe.New(0, r.UserId, r.Name, r.Description, r.Actions))
 	}
 
-	parentSpan, ctx := opentracing.StartSpanFromContext(ctx, "MultiCreateRecipeV1")
-	defer parentSpan.Finish()
+	span, ctx := opentracing.StartSpanFromContext(ctx, "MultiCreateRecipeV1")
+	span.LogFields(opentracingLog.Int("Total recipes count", len(newRecipes)))
+	defer span.Finish()
 
 	for _, recipesSlice := range utils.SplitRecipeSlice(newRecipes, batchSize) {
-		if insertErr := s.batchInsert(ctx, parentSpan, recipesSlice); insertErr != nil {
+		if insertErr := s.batchInsert(ctx, span, recipesSlice); insertErr != nil {
 			return nil, insertErr
 		}
 	}
@@ -43,11 +44,9 @@ func (s *GRPCServer) MultiCreateRecipeV1(ctx context.Context, req *recipeApi.Mul
 }
 
 func (s *GRPCServer) batchInsert(ctx context.Context, parentSpan opentracing.Span, recipesSlice []recipe.Recipe) error {
-	childSpan := opentracing.StartSpan("MultiCreateRecipeV1Batch", opentracing.ChildOf(parentSpan.Context()))
-	childSpan.LogFields(
-		opentracingLog.Int("Recipes count", len(recipesSlice)),
-	)
-	defer childSpan.Finish()
+	span := opentracing.StartSpan("MultiCreateRecipeV1Batch", opentracing.ChildOf(parentSpan.Context()))
+	span.LogFields(opentracingLog.Int("Recipes count", len(recipesSlice)))
+	defer span.Finish()
 	if addErr := s.recipeRepo.AddRecipes(ctx, recipesSlice); addErr != nil {
 		log.Error().Msgf("Can not add new recipes, error: %s", addErr)
 		return addErr

@@ -61,8 +61,6 @@ func main() {
 		log.Fatal().Msgf("Can not load .env file, error: %s", loadEnvErr)
 	}
 
-	ctx := context.Background()
-
 	go runPrometheusMetrics()
 
 	tracer, closer := initTracer()
@@ -88,12 +86,8 @@ func main() {
 	}
 
 	kafkaClient := kafka_client.New()
-	kafkaConnErr := kafkaClient.Connect(
-		ctx,
-		fmt.Sprintf("%s:%s", os.Getenv("KAFKA_HOST"), os.Getenv("KAFKA_PORT")),
-		"CUDEvents",
-		0)
-	if kafkaConnErr != nil {
+	kafkaDsn := fmt.Sprintf("%s:%s", os.Getenv("KAFKA_HOST"), os.Getenv("KAFKA_PORT"))
+	if kafkaConnErr := kafkaClient.Connect(context.Background(), kafkaDsn, "CUDEvents", 0); kafkaConnErr != nil {
 		log.Fatal().Msgf("Can not connect to kafka, %s", kafkaConnErr)
 	}
 
