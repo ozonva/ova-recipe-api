@@ -7,7 +7,6 @@ import (
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"google.golang.org/protobuf/types/known/emptypb"
 	"ova-recipe-api/internal/recipe"
 	"ova-recipe-api/internal/utils"
 	recipeApi "ova-recipe-api/pkg/api/github.com/ozonva/ova-recipe-api/pkg/api"
@@ -15,7 +14,7 @@ import (
 
 const batchSize = uint(2)
 
-func (s *GRPCServer) MultiCreateRecipeV1(ctx context.Context, req *recipeApi.MultiCreateRecipeRequestV1) (*emptypb.Empty, error) {
+func (s *GRPCServer) MultiCreateRecipeV1(ctx context.Context, req *recipeApi.MultiCreateRecipeRequestV1) (*recipeApi.MultiCreateRecipeResponseV1, error) {
 	if sendError := s.sendKafkaCreateEvent(); sendError != nil {
 		log.Error().Msgf("Can not send create event to kafka, error: %s", sendError)
 	}
@@ -40,7 +39,7 @@ func (s *GRPCServer) MultiCreateRecipeV1(ctx context.Context, req *recipeApi.Mul
 		}
 	}
 
-	return &emptypb.Empty{}, nil
+	return &recipeApi.MultiCreateRecipeResponseV1{}, nil
 }
 
 func (s *GRPCServer) batchInsert(ctx context.Context, parentSpan opentracing.Span, recipesSlice []recipe.Recipe) error {

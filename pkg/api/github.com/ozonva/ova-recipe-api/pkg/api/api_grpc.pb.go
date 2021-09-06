@@ -7,7 +7,6 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
-	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -20,11 +19,11 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type OvaRecipeApiClient interface {
 	CreateRecipeV1(ctx context.Context, in *CreateRecipeRequestV1, opts ...grpc.CallOption) (*CreateRecipeResponseV1, error)
-	MultiCreateRecipeV1(ctx context.Context, in *MultiCreateRecipeRequestV1, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	MultiCreateRecipeV1(ctx context.Context, in *MultiCreateRecipeRequestV1, opts ...grpc.CallOption) (*MultiCreateRecipeResponseV1, error)
 	DescribeRecipeV1(ctx context.Context, in *DescribeRecipeRequestV1, opts ...grpc.CallOption) (*DescribeRecipeResponseV1, error)
 	ListRecipesV1(ctx context.Context, in *ListRecipesRequestV1, opts ...grpc.CallOption) (*ListRecipesResponseV1, error)
 	RemoveRecipeV1(ctx context.Context, in *RemoveRecipeRequestV1, opts ...grpc.CallOption) (*RemoveRecipesResponseV1, error)
-	UpdateRecipeV1(ctx context.Context, in *UpdateRecipeRequestV1, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	UpdateRecipeV1(ctx context.Context, in *UpdateRecipeRequestV1, opts ...grpc.CallOption) (*UpdateRecipeResponseV1, error)
 }
 
 type ovaRecipeApiClient struct {
@@ -44,8 +43,8 @@ func (c *ovaRecipeApiClient) CreateRecipeV1(ctx context.Context, in *CreateRecip
 	return out, nil
 }
 
-func (c *ovaRecipeApiClient) MultiCreateRecipeV1(ctx context.Context, in *MultiCreateRecipeRequestV1, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *ovaRecipeApiClient) MultiCreateRecipeV1(ctx context.Context, in *MultiCreateRecipeRequestV1, opts ...grpc.CallOption) (*MultiCreateRecipeResponseV1, error) {
+	out := new(MultiCreateRecipeResponseV1)
 	err := c.cc.Invoke(ctx, "/ova.recipe.api.OvaRecipeApi/MultiCreateRecipeV1", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -80,8 +79,8 @@ func (c *ovaRecipeApiClient) RemoveRecipeV1(ctx context.Context, in *RemoveRecip
 	return out, nil
 }
 
-func (c *ovaRecipeApiClient) UpdateRecipeV1(ctx context.Context, in *UpdateRecipeRequestV1, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *ovaRecipeApiClient) UpdateRecipeV1(ctx context.Context, in *UpdateRecipeRequestV1, opts ...grpc.CallOption) (*UpdateRecipeResponseV1, error) {
+	out := new(UpdateRecipeResponseV1)
 	err := c.cc.Invoke(ctx, "/ova.recipe.api.OvaRecipeApi/UpdateRecipeV1", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -94,11 +93,11 @@ func (c *ovaRecipeApiClient) UpdateRecipeV1(ctx context.Context, in *UpdateRecip
 // for forward compatibility
 type OvaRecipeApiServer interface {
 	CreateRecipeV1(context.Context, *CreateRecipeRequestV1) (*CreateRecipeResponseV1, error)
-	MultiCreateRecipeV1(context.Context, *MultiCreateRecipeRequestV1) (*emptypb.Empty, error)
+	MultiCreateRecipeV1(context.Context, *MultiCreateRecipeRequestV1) (*MultiCreateRecipeResponseV1, error)
 	DescribeRecipeV1(context.Context, *DescribeRecipeRequestV1) (*DescribeRecipeResponseV1, error)
 	ListRecipesV1(context.Context, *ListRecipesRequestV1) (*ListRecipesResponseV1, error)
 	RemoveRecipeV1(context.Context, *RemoveRecipeRequestV1) (*RemoveRecipesResponseV1, error)
-	UpdateRecipeV1(context.Context, *UpdateRecipeRequestV1) (*emptypb.Empty, error)
+	UpdateRecipeV1(context.Context, *UpdateRecipeRequestV1) (*UpdateRecipeResponseV1, error)
 	mustEmbedUnimplementedOvaRecipeApiServer()
 }
 
@@ -109,7 +108,7 @@ type UnimplementedOvaRecipeApiServer struct {
 func (UnimplementedOvaRecipeApiServer) CreateRecipeV1(context.Context, *CreateRecipeRequestV1) (*CreateRecipeResponseV1, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateRecipeV1 not implemented")
 }
-func (UnimplementedOvaRecipeApiServer) MultiCreateRecipeV1(context.Context, *MultiCreateRecipeRequestV1) (*emptypb.Empty, error) {
+func (UnimplementedOvaRecipeApiServer) MultiCreateRecipeV1(context.Context, *MultiCreateRecipeRequestV1) (*MultiCreateRecipeResponseV1, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MultiCreateRecipeV1 not implemented")
 }
 func (UnimplementedOvaRecipeApiServer) DescribeRecipeV1(context.Context, *DescribeRecipeRequestV1) (*DescribeRecipeResponseV1, error) {
@@ -121,7 +120,7 @@ func (UnimplementedOvaRecipeApiServer) ListRecipesV1(context.Context, *ListRecip
 func (UnimplementedOvaRecipeApiServer) RemoveRecipeV1(context.Context, *RemoveRecipeRequestV1) (*RemoveRecipesResponseV1, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveRecipeV1 not implemented")
 }
-func (UnimplementedOvaRecipeApiServer) UpdateRecipeV1(context.Context, *UpdateRecipeRequestV1) (*emptypb.Empty, error) {
+func (UnimplementedOvaRecipeApiServer) UpdateRecipeV1(context.Context, *UpdateRecipeRequestV1) (*UpdateRecipeResponseV1, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateRecipeV1 not implemented")
 }
 func (UnimplementedOvaRecipeApiServer) mustEmbedUnimplementedOvaRecipeApiServer() {}

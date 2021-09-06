@@ -1,7 +1,6 @@
 syntax = "proto3";
 
 import "google/api/annotations.proto";
-import "google/protobuf/empty.proto";
 import "github.com/envoyproxy/protoc-gen-validate/validate/validate.proto";
 
 package ova.recipe.api;
@@ -10,11 +9,11 @@ option go_package = "github.com/ozonva/ova-recipe-api/pkg/api";
 
 service OvaRecipeApi {
   rpc CreateRecipeV1(CreateRecipeRequestV1) returns (CreateRecipeResponseV1) {}
-  rpc MultiCreateRecipeV1(MultiCreateRecipeRequestV1) returns (google.protobuf.Empty) {}
+  rpc MultiCreateRecipeV1(MultiCreateRecipeRequestV1) returns (MultiCreateRecipeResponseV1) {}
   rpc DescribeRecipeV1(DescribeRecipeRequestV1) returns (DescribeRecipeResponseV1) {}
   rpc ListRecipesV1(ListRecipesRequestV1) returns (ListRecipesResponseV1) {}
   rpc RemoveRecipeV1(RemoveRecipeRequestV1) returns (RemoveRecipesResponseV1) {}
-  rpc UpdateRecipeV1(UpdateRecipeRequestV1) returns (google.protobuf.Empty) {}
+  rpc UpdateRecipeV1(UpdateRecipeRequestV1) returns (UpdateRecipeResponseV1) {}
 }
 
 message CreateRecipeRequestV1 {
@@ -37,6 +36,9 @@ message CreateRecipeV1 {
 
 message MultiCreateRecipeRequestV1 {
   repeated CreateRecipeV1 recipes = 1 [(validate.rules).repeated.min_items = 1];
+}
+
+message MultiCreateRecipeResponseV1 {
 }
 
 message DescribeRecipeRequestV1 {
@@ -74,4 +76,7 @@ message RemoveRecipesResponseV1 {
 
 message UpdateRecipeRequestV1 {
   RecipeV1 recipe = 1;
+}
+
+message UpdateRecipeResponseV1 {
 }

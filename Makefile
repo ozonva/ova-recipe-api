@@ -65,12 +65,6 @@ generate-vendor-proto:
 		mkdir -p vendor.protogen/github.com/envoyproxy &&\
 		git clone https://github.com/envoyproxy/protoc-gen-validate vendor.protogen/github.com/envoyproxy/protoc-gen-validate ;\
 	fi
-	@if [ ! -d vendor.protogen/google/protobuf ]; then \
-		git clone https://github.com/protocolbuffers/protobuf vendor.protogen/protobuf &&\
-		mkdir -p  vendor.protogen/google/protobuf &&\
-		mv vendor.protogen/protobuf/src/google/protobuf/*.proto vendor.protogen/google/protobuf &&\
-		rm -rf vendor.protogen/protobuf ;\
-    fi
 
 .PHONY: all
 all: deps generate-vendor-proto generate-proto build

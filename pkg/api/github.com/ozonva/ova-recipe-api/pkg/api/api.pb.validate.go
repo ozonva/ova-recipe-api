@@ -408,6 +408,74 @@ var _ interface {
 	ErrorName() string
 } = MultiCreateRecipeRequestV1ValidationError{}
 
+// Validate checks the field values on MultiCreateRecipeResponseV1 with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, an error is returned.
+func (m *MultiCreateRecipeResponseV1) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+// MultiCreateRecipeResponseV1ValidationError is the validation error returned
+// by MultiCreateRecipeResponseV1.Validate if the designated constraints
+// aren't met.
+type MultiCreateRecipeResponseV1ValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e MultiCreateRecipeResponseV1ValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e MultiCreateRecipeResponseV1ValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e MultiCreateRecipeResponseV1ValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e MultiCreateRecipeResponseV1ValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e MultiCreateRecipeResponseV1ValidationError) ErrorName() string {
+	return "MultiCreateRecipeResponseV1ValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e MultiCreateRecipeResponseV1ValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sMultiCreateRecipeResponseV1.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = MultiCreateRecipeResponseV1ValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = MultiCreateRecipeResponseV1ValidationError{}
+
 // Validate checks the field values on DescribeRecipeRequestV1 with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, an error is returned.
@@ -1052,3 +1120,70 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = UpdateRecipeRequestV1ValidationError{}
+
+// Validate checks the field values on UpdateRecipeResponseV1 with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, an error is returned.
+func (m *UpdateRecipeResponseV1) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+// UpdateRecipeResponseV1ValidationError is the validation error returned by
+// UpdateRecipeResponseV1.Validate if the designated constraints aren't met.
+type UpdateRecipeResponseV1ValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UpdateRecipeResponseV1ValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UpdateRecipeResponseV1ValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UpdateRecipeResponseV1ValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UpdateRecipeResponseV1ValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UpdateRecipeResponseV1ValidationError) ErrorName() string {
+	return "UpdateRecipeResponseV1ValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UpdateRecipeResponseV1ValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUpdateRecipeResponseV1.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UpdateRecipeResponseV1ValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UpdateRecipeResponseV1ValidationError{}

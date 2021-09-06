@@ -16,8 +16,9 @@ type Metrics interface {
 
 const (
 	successResultLabel = "success"
-	failResultLabel = "fail"
+	failResultLabel    = "fail"
 )
+
 var labels = []string{"result"}
 
 type metrics struct {
@@ -29,20 +30,20 @@ type metrics struct {
 func newApiMetrics() Metrics {
 	return &metrics{
 		createRecipeCounter: promauto.NewCounterVec(prometheus.CounterOpts{
-				Name: "create_recipe_request_count",
-				Help: "number of created recipes",
-			},
+			Name: "create_recipe_request_count",
+			Help: "number of created recipes",
+		},
 			labels),
 
 		removeRecipeCounter: promauto.NewCounterVec(prometheus.CounterOpts{
-				Name: "remove_recipe_request_count",
-				Help: "number of removed recipes",
-			},
+			Name: "remove_recipe_request_count",
+			Help: "number of removed recipes",
+		},
 			labels),
 		updateRecipeCounter: promauto.NewCounterVec(prometheus.CounterOpts{
-				Name: "update_recipe_request_count",
-				Help: "number of removed recipes",
-			},
+			Name: "update_recipe_request_count",
+			Help: "number of removed recipes",
+		},
 			labels),
 	}
 }

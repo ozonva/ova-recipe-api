@@ -5,12 +5,11 @@ import (
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"google.golang.org/protobuf/types/known/emptypb"
 	"ova-recipe-api/internal/recipe"
 	recipeApi "ova-recipe-api/pkg/api/github.com/ozonva/ova-recipe-api/pkg/api"
 )
 
-func (s *GRPCServer) UpdateRecipeV1(ctx context.Context, req *recipeApi.UpdateRecipeRequestV1) (resp *emptypb.Empty, err error) {
+func (s *GRPCServer) UpdateRecipeV1(ctx context.Context, req *recipeApi.UpdateRecipeRequestV1) (resp *recipeApi.UpdateRecipeResponseV1, err error) {
 	defer func() {
 		if err != nil {
 			s.metrics.incFailUpdateRecipeCounter()
@@ -31,5 +30,5 @@ func (s *GRPCServer) UpdateRecipeV1(ctx context.Context, req *recipeApi.UpdateRe
 		log.Error().Msgf("Can not update recipe, error: %s", err)
 		return nil, err
 	}
-	return &emptypb.Empty{}, nil
+	return &recipeApi.UpdateRecipeResponseV1{}, nil
 }
