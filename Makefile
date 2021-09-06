@@ -34,6 +34,8 @@ build:
 test-internal:
 	rm -rf ./internal/*/*_mock.go
 	mockgen -destination=./internal/repo/repo_mock.go -package=repo ova-recipe-api/internal/repo RecipeRepo
+	mockgen -destination=./internal/api/metrics_mock.go -package=api ova-recipe-api/internal/api Metrics
+	mockgen -destination=./internal/kafka_client/kafka_client_mock.go -package=kafka_client ova-recipe-api/internal/kafka_client Client
 	mockgen -destination=./internal/flusher/flusher_mock.go -package=flusher ova-recipe-api/internal/flusher Flusher
 	mockgen -destination=./internal/ticker/ticker_mock.go -package=ticker ova-recipe-api/internal/ticker Ticker
 	go test -race ./internal/...

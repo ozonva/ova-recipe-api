@@ -1,6 +1,7 @@
 package flusher_test
 
 import (
+	"context"
 	"fmt"
 	"github.com/golang/mock/gomock"
 	. "github.com/onsi/ginkgo"
@@ -12,6 +13,7 @@ import (
 
 var _ = Describe("Flusher", func() {
 	var (
+		ctx         = context.Background()
 		mockCtrl    *gomock.Controller
 		mockRepo    *repo.MockRecipeRepo
 		testFlusher flusher.Flusher
@@ -37,7 +39,7 @@ var _ = Describe("Flusher", func() {
 			Context("recipes count less than chunkSize", func() {
 				oneRecipe := recipes[:1]
 				BeforeEach(func() {
-					mockRepo.EXPECT().AddRecipes(oneRecipe).Return(nil).Times(1)
+					mockRepo.EXPECT().AddRecipes(ctx, oneRecipe).Return(nil).Times(1)
 				})
 				It("Flush should return nil", func() {
 					AssertFlushReturnNil(oneRecipe)
@@ -46,8 +48,8 @@ var _ = Describe("Flusher", func() {
 			Context("recipes count more than chunkSize", func() {
 				BeforeEach(func() {
 					gomock.InOrder(
-						mockRepo.EXPECT().AddRecipes(recipes[:2]).Return(nil).Times(1),
-						mockRepo.EXPECT().AddRecipes(recipes[2:]).Return(nil).Times(1),
+						mockRepo.EXPECT().AddRecipes(ctx, recipes[:2]).Return(nil).Times(1),
+						mockRepo.EXPECT().AddRecipes(ctx, recipes[2:]).Return(nil).Times(1),
 					)
 				})
 				It("Flush should return nil", func() {
@@ -63,8 +65,8 @@ var _ = Describe("Flusher", func() {
 			Context("all data", func() {
 				BeforeEach(func() {
 					gomock.InOrder(
-						mockRepo.EXPECT().AddRecipes(recipes[:2]).Return(err).Times(1),
-						mockRepo.EXPECT().AddRecipes(recipes[2:]).Return(err).Times(1),
+						mockRepo.EXPECT().AddRecipes(ctx, recipes[:2]).Return(err).Times(1),
+						mockRepo.EXPECT().AddRecipes(ctx, recipes[2:]).Return(err).Times(1),
 					)
 				})
 				It("Flush should return all data", func() {
@@ -74,8 +76,8 @@ var _ = Describe("Flusher", func() {
 			Context("some data", func() {
 				BeforeEach(func() {
 					gomock.InOrder(
-						mockRepo.EXPECT().AddRecipes(recipes[:2]).Return(err).Times(1),
-						mockRepo.EXPECT().AddRecipes(recipes[2:]).Return(nil).Times(1),
+						mockRepo.EXPECT().AddRecipes(ctx, recipes[:2]).Return(err).Times(1),
+						mockRepo.EXPECT().AddRecipes(ctx, recipes[2:]).Return(nil).Times(1),
 					)
 				})
 				It("Flush should return only rejected data", func() {

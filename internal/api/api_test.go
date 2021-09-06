@@ -1,4 +1,4 @@
-package api_test
+package api
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/test/bufconn"
 	"net"
-	"ova-recipe-api/internal/api"
+	"ova-recipe-api/internal/kafka_client"
 	"ova-recipe-api/internal/recipe"
 	"ova-recipe-api/internal/repo"
 	recipeApi "ova-recipe-api/pkg/api/github.com/ozonva/ova-recipe-api/pkg/api"
@@ -22,6 +22,8 @@ var _ = Describe("Api", func() {
 		bufListener *bufconn.Listener
 		mockCtrl    *gomock.Controller
 		mockRepo    *repo.MockRecipeRepo
+		mockMetrics *MockMetrics
+		mockKafka   *kafka_client.MockClient
 		grpcServer  *grpc.Server
 		ctx         context.Context
 		startWG     sync.WaitGroup
@@ -31,8 +33,10 @@ var _ = Describe("Api", func() {
 	BeforeEach(func() {
 		mockCtrl = gomock.NewController(GinkgoT())
 		mockRepo = repo.NewMockRecipeRepo(mockCtrl)
+		mockMetrics = NewMockMetrics(mockCtrl)
+		mockKafka = kafka_client.NewMockClient(mockCtrl)
 		grpcServer = grpc.NewServer()
-		recipeApi.RegisterOvaRecipeApiServer(grpcServer, api.NewOvaRecipeApiServer(mockRepo))
+		recipeApi.RegisterOvaRecipeApiServer(grpcServer, &GRPCServer{recipeRepo: mockRepo, kafkaClient: mockKafka, metrics: mockMetrics})
 		bufListener = bufconn.Listen(bufSize)
 		startWG.Add(1)
 		go func() {
@@ -60,6 +64,9 @@ var _ = Describe("Api", func() {
 			expectedRecipe := recipe.New(0, 1, "test name", "test description", []string{"testOne", "testTwo"})
 			expectedRecipeId := uint64(1)
 			BeforeEach(func() {
+				mockMetrics.EXPECT().incSuccessCreateRecipeCounter().Times(1)
+				mockMetrics.EXPECT().incFailCreateRecipeCounter().Times(0)
+				mockKafka.EXPECT().SendMessage(gomock.Any()).Times(1)
 				mockRepo.EXPECT().AddRecipe(gomock.Any(), expectedRecipe).Return(expectedRecipeId, nil).Times(1)
 			})
 			It("should return new recipe id", func() {
@@ -78,6 +85,9 @@ var _ = Describe("Api", func() {
 			expectedRecipe := recipe.New(0, 1, "test name", "test description", []string{"testOne", "testTwo"})
 			expectedError := fmt.Errorf("Can not create new recipe. ")
 			BeforeEach(func() {
+				mockKafka.EXPECT().SendMessage(gomock.Any()).Times(1)
+				mockMetrics.EXPECT().incSuccessCreateRecipeCounter().Times(0)
+				mockMetrics.EXPECT().incFailCreateRecipeCounter().Times(1)
 				mockRepo.EXPECT().AddRecipe(gomock.Any(), expectedRecipe).Return(
 					uint64(0), expectedError).Times(1)
 			})
@@ -95,6 +105,9 @@ var _ = Describe("Api", func() {
 		})
 		When("Invalid userId", func() {
 			BeforeEach(func() {
+				mockKafka.EXPECT().SendMessage(gomock.Any()).Times(1)
+				mockMetrics.EXPECT().incSuccessCreateRecipeCounter().Times(0)
+				mockMetrics.EXPECT().incFailCreateRecipeCounter().Times(1)
 				mockRepo.EXPECT().AddRecipe(gomock.Any(), gomock.Any()).Times(0)
 			})
 			It("should return error", func() {
@@ -107,6 +120,38 @@ var _ = Describe("Api", func() {
 				newRecipeResponse, err := client.CreateRecipeV1(ctx, &req)
 				Expect(err.Error()).To(ContainSubstring("invalid CreateRecipeRequestV1.UserId: value must be greater than 0"))
 				Expect(newRecipeResponse).To(BeNil())
+			})
+		})
+	})
+	Describe("Do multi create query", func() {
+		When("recipes count > batch size", func() {
+			expectedRecipes := []recipe.Recipe{
+				recipe.New(0, 1, "test name", "test description", []string{"testOne", "testTwo"}),
+				recipe.New(0, 2, "test name", "test description", []string{"testOne", "testTwo"}),
+				recipe.New(0, 3, "test name", "test description", []string{"testOne", "testTwo"}),
+			}
+			BeforeEach(func() {
+				gomock.InOrder(
+					mockKafka.EXPECT().SendMessage(gomock.Any()).Times(1),
+					mockRepo.EXPECT().AddRecipes(gomock.Any(), expectedRecipes[:2]).Return(nil).Times(1),
+					mockRepo.EXPECT().AddRecipes(gomock.Any(), expectedRecipes[2:]).Return(nil).Times(1),
+				)
+			})
+			It("should return new recipe id", func() {
+				recipes := make([]*recipeApi.CreateRecipeV1, 0, len(expectedRecipes))
+				for _, expectedRecipe := range expectedRecipes {
+					recipes = append(recipes, &recipeApi.CreateRecipeV1{
+						UserId:      expectedRecipe.UserId(),
+						Name:        expectedRecipe.Name(),
+						Description: expectedRecipe.Description(),
+						Actions:     expectedRecipe.Actions(),
+					})
+				}
+				req := recipeApi.MultiCreateRecipeRequestV1{
+					Recipes: recipes,
+				}
+				_, err := client.MultiCreateRecipeV1(ctx, &req)
+				Expect(err).To(BeNil())
 			})
 		})
 	})

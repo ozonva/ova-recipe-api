@@ -19,9 +19,11 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type OvaRecipeApiClient interface {
 	CreateRecipeV1(ctx context.Context, in *CreateRecipeRequestV1, opts ...grpc.CallOption) (*CreateRecipeResponseV1, error)
+	MultiCreateRecipeV1(ctx context.Context, in *MultiCreateRecipeRequestV1, opts ...grpc.CallOption) (*MultiCreateRecipeResponseV1, error)
 	DescribeRecipeV1(ctx context.Context, in *DescribeRecipeRequestV1, opts ...grpc.CallOption) (*DescribeRecipeResponseV1, error)
 	ListRecipesV1(ctx context.Context, in *ListRecipesRequestV1, opts ...grpc.CallOption) (*ListRecipesResponseV1, error)
 	RemoveRecipeV1(ctx context.Context, in *RemoveRecipeRequestV1, opts ...grpc.CallOption) (*RemoveRecipesResponseV1, error)
+	UpdateRecipeV1(ctx context.Context, in *UpdateRecipeRequestV1, opts ...grpc.CallOption) (*UpdateRecipeResponseV1, error)
 }
 
 type ovaRecipeApiClient struct {
@@ -35,6 +37,15 @@ func NewOvaRecipeApiClient(cc grpc.ClientConnInterface) OvaRecipeApiClient {
 func (c *ovaRecipeApiClient) CreateRecipeV1(ctx context.Context, in *CreateRecipeRequestV1, opts ...grpc.CallOption) (*CreateRecipeResponseV1, error) {
 	out := new(CreateRecipeResponseV1)
 	err := c.cc.Invoke(ctx, "/ova.recipe.api.OvaRecipeApi/CreateRecipeV1", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *ovaRecipeApiClient) MultiCreateRecipeV1(ctx context.Context, in *MultiCreateRecipeRequestV1, opts ...grpc.CallOption) (*MultiCreateRecipeResponseV1, error) {
+	out := new(MultiCreateRecipeResponseV1)
+	err := c.cc.Invoke(ctx, "/ova.recipe.api.OvaRecipeApi/MultiCreateRecipeV1", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -68,14 +79,25 @@ func (c *ovaRecipeApiClient) RemoveRecipeV1(ctx context.Context, in *RemoveRecip
 	return out, nil
 }
 
+func (c *ovaRecipeApiClient) UpdateRecipeV1(ctx context.Context, in *UpdateRecipeRequestV1, opts ...grpc.CallOption) (*UpdateRecipeResponseV1, error) {
+	out := new(UpdateRecipeResponseV1)
+	err := c.cc.Invoke(ctx, "/ova.recipe.api.OvaRecipeApi/UpdateRecipeV1", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OvaRecipeApiServer is the server API for OvaRecipeApi service.
 // All implementations must embed UnimplementedOvaRecipeApiServer
 // for forward compatibility
 type OvaRecipeApiServer interface {
 	CreateRecipeV1(context.Context, *CreateRecipeRequestV1) (*CreateRecipeResponseV1, error)
+	MultiCreateRecipeV1(context.Context, *MultiCreateRecipeRequestV1) (*MultiCreateRecipeResponseV1, error)
 	DescribeRecipeV1(context.Context, *DescribeRecipeRequestV1) (*DescribeRecipeResponseV1, error)
 	ListRecipesV1(context.Context, *ListRecipesRequestV1) (*ListRecipesResponseV1, error)
 	RemoveRecipeV1(context.Context, *RemoveRecipeRequestV1) (*RemoveRecipesResponseV1, error)
+	UpdateRecipeV1(context.Context, *UpdateRecipeRequestV1) (*UpdateRecipeResponseV1, error)
 	mustEmbedUnimplementedOvaRecipeApiServer()
 }
 
@@ -86,6 +108,9 @@ type UnimplementedOvaRecipeApiServer struct {
 func (UnimplementedOvaRecipeApiServer) CreateRecipeV1(context.Context, *CreateRecipeRequestV1) (*CreateRecipeResponseV1, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateRecipeV1 not implemented")
 }
+func (UnimplementedOvaRecipeApiServer) MultiCreateRecipeV1(context.Context, *MultiCreateRecipeRequestV1) (*MultiCreateRecipeResponseV1, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MultiCreateRecipeV1 not implemented")
+}
 func (UnimplementedOvaRecipeApiServer) DescribeRecipeV1(context.Context, *DescribeRecipeRequestV1) (*DescribeRecipeResponseV1, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DescribeRecipeV1 not implemented")
 }
@@ -94,6 +119,9 @@ func (UnimplementedOvaRecipeApiServer) ListRecipesV1(context.Context, *ListRecip
 }
 func (UnimplementedOvaRecipeApiServer) RemoveRecipeV1(context.Context, *RemoveRecipeRequestV1) (*RemoveRecipesResponseV1, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveRecipeV1 not implemented")
+}
+func (UnimplementedOvaRecipeApiServer) UpdateRecipeV1(context.Context, *UpdateRecipeRequestV1) (*UpdateRecipeResponseV1, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateRecipeV1 not implemented")
 }
 func (UnimplementedOvaRecipeApiServer) mustEmbedUnimplementedOvaRecipeApiServer() {}
 
@@ -122,6 +150,24 @@ func _OvaRecipeApi_CreateRecipeV1_Handler(srv interface{}, ctx context.Context, 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(OvaRecipeApiServer).CreateRecipeV1(ctx, req.(*CreateRecipeRequestV1))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OvaRecipeApi_MultiCreateRecipeV1_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MultiCreateRecipeRequestV1)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OvaRecipeApiServer).MultiCreateRecipeV1(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ova.recipe.api.OvaRecipeApi/MultiCreateRecipeV1",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OvaRecipeApiServer).MultiCreateRecipeV1(ctx, req.(*MultiCreateRecipeRequestV1))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -180,6 +226,24 @@ func _OvaRecipeApi_RemoveRecipeV1_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OvaRecipeApi_UpdateRecipeV1_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateRecipeRequestV1)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OvaRecipeApiServer).UpdateRecipeV1(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ova.recipe.api.OvaRecipeApi/UpdateRecipeV1",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OvaRecipeApiServer).UpdateRecipeV1(ctx, req.(*UpdateRecipeRequestV1))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // OvaRecipeApi_ServiceDesc is the grpc.ServiceDesc for OvaRecipeApi service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -192,6 +256,10 @@ var OvaRecipeApi_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _OvaRecipeApi_CreateRecipeV1_Handler,
 		},
 		{
+			MethodName: "MultiCreateRecipeV1",
+			Handler:    _OvaRecipeApi_MultiCreateRecipeV1_Handler,
+		},
+		{
 			MethodName: "DescribeRecipeV1",
 			Handler:    _OvaRecipeApi_DescribeRecipeV1_Handler,
 		},
@@ -202,6 +270,10 @@ var OvaRecipeApi_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RemoveRecipeV1",
 			Handler:    _OvaRecipeApi_RemoveRecipeV1_Handler,
+		},
+		{
+			MethodName: "UpdateRecipeV1",
+			Handler:    _OvaRecipeApi_UpdateRecipeV1_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

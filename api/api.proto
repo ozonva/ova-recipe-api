@@ -9,9 +9,11 @@ option go_package = "github.com/ozonva/ova-recipe-api/pkg/api";
 
 service OvaRecipeApi {
   rpc CreateRecipeV1(CreateRecipeRequestV1) returns (CreateRecipeResponseV1) {}
+  rpc MultiCreateRecipeV1(MultiCreateRecipeRequestV1) returns (MultiCreateRecipeResponseV1) {}
   rpc DescribeRecipeV1(DescribeRecipeRequestV1) returns (DescribeRecipeResponseV1) {}
   rpc ListRecipesV1(ListRecipesRequestV1) returns (ListRecipesResponseV1) {}
   rpc RemoveRecipeV1(RemoveRecipeRequestV1) returns (RemoveRecipesResponseV1) {}
+  rpc UpdateRecipeV1(UpdateRecipeRequestV1) returns (UpdateRecipeResponseV1) {}
 }
 
 message CreateRecipeRequestV1 {
@@ -23,6 +25,20 @@ message CreateRecipeRequestV1 {
 
 message CreateRecipeResponseV1 {
   uint64 recipe_id = 1 [(validate.rules).uint64.gt = 0];
+}
+
+message CreateRecipeV1 {
+  uint64 user_id          = 1 [(validate.rules).uint64.gt = 0];
+  string name             = 2 [(validate.rules).string.min_len = 1];
+  string description      = 3 [(validate.rules).string.min_len = 1];
+  repeated string actions = 4 [(validate.rules).repeated.min_items = 1, (validate.rules).repeated.items.string.min_len = 1];
+}
+
+message MultiCreateRecipeRequestV1 {
+  repeated CreateRecipeV1 recipes = 1 [(validate.rules).repeated.min_items = 1];
+}
+
+message MultiCreateRecipeResponseV1 {
 }
 
 message DescribeRecipeRequestV1 {
@@ -56,4 +72,11 @@ message RemoveRecipeRequestV1 {
 
 message RemoveRecipesResponseV1 {
   uint64 recipe_id = 1 [(validate.rules).uint64.gt = 0];
+}
+
+message UpdateRecipeRequestV1 {
+  RecipeV1 recipe = 1;
+}
+
+message UpdateRecipeResponseV1 {
 }

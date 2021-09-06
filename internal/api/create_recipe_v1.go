@@ -9,7 +9,17 @@ import (
 	recipeApi "ova-recipe-api/pkg/api/github.com/ozonva/ova-recipe-api/pkg/api"
 )
 
-func (s *GRPCServer) CreateRecipeV1(ctx context.Context, req *recipeApi.CreateRecipeRequestV1) (*recipeApi.CreateRecipeResponseV1, error) {
+func (s *GRPCServer) CreateRecipeV1(ctx context.Context, req *recipeApi.CreateRecipeRequestV1) (resp *recipeApi.CreateRecipeResponseV1, err error) {
+	defer func() {
+		if err != nil {
+			s.metrics.incFailCreateRecipeCounter()
+		} else {
+			s.metrics.incSuccessCreateRecipeCounter()
+		}
+	}()
+	if sendError := s.sendKafkaCreateEvent(); sendError != nil {
+		log.Error().Msgf("Can not send create event to kafka, error: %s", sendError)
+	}
 	log.Info().Msgf("Receive new create request: %s", req.String())
 	if validationErr := req.Validate(); validationErr != nil {
 		log.Error().Msgf("Invalid create recipe request, error: %s", validationErr)
